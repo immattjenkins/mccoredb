@@ -175,7 +175,7 @@ DELIMITER ;
 -- GetStudentInfo
 DROP PROCEDURE IF EXISTS `GetStudentInfo`;
 DELIMITER //
-CREATE PROCEDURE `GetStudentInfo`(`studentID`)
+CREATE PROCEDURE `GetStudentInfo`(`studentID` INT)
 BEGIN
 	SELECT `ID` AS `ID`, `FirstName` AS `First Name`, `LastName` AS `Last Name`
 		FROM `Student`
@@ -184,12 +184,12 @@ END;//
 DELIMITER ;
 
 -- GetAllStudents
-DROP PROCEDURE IF EXISTS `GetAllStudents`
+DROP PROCEDURE IF EXISTS `GetAllStudents`;
 DELIMITER //
 CREATE PROCEDURE `GetAllStudents`()
 BEGIN
 	SELECT `ID` AS `ID`, `FirstName` AS `First Name`, `LastName` AS `Last Name`
-		FROM `Student`
+		FROM `Student`; 
 END;//
 DELIMITER ;
 
@@ -248,7 +248,7 @@ DELIMITER ;
 -- DemoteFaculty
 DROP PROCEDURE IF EXISTS `DemoteFaculty`;
 DELIMITER //
-CREATE PROCEDURE `PromoteFaculty`(`facultyID` INT)
+CREATE PROCEDURE `DemoteFaculty`(`facultyID` INT)
 BEGIN
 	UPDATE IGNORE `Faculty` SET `CanCreateDomain` = 0 WHERE `ID`  = `facultyID`;
 
@@ -271,6 +271,7 @@ BEGIN
 		SELECT `facultyID` AS `ID`, 'Password changed successfully' as `Message`;
 	ELSE
 		SELECT -1 AS `ID`, 'Password change failed.' AS `Message`;
+	END IF;
 END;//
 DELIMITER ;
 
