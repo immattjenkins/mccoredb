@@ -24,16 +24,18 @@ CREATE TABLE `Faculty` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`Username` VARCHAR(255) NOT NULL,
   	`Password` VARCHAR(255) NOT NULL,
-        `Role` ENUM('Inactive', 'Professor', 'Chair') NOT NULL,
+	`CanCreateDomain` VARCHAR(255) NOT NULL,
 	`FirstName` VARCHAR(255) NOT NULL,
 	`LastName` VARCHAR(255) NOT NULL,
-	`Department` VARCHAR(255) NOT NULL
+	`Department` VARCHAR(255) NOT NULL,
+	`CreatedOn` DATETIME NOT NULL
 );
 
 CREATE TABLE `Domain` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`Title` VARCHAR(255) NOT NULL
 );
+-- Contains CreateDomain, DeleteDomain procedures
 
 CREATE TABLE `Prospectus` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
@@ -109,6 +111,36 @@ CREATE TABLE `RubricItemResponse` (
 -- Procedures
 --
 
+-- 
+-- Domain
+--
+
+DROP PROCEDURE IF EXISTS `CreateDomain`;
+DELIMITER //
+CREATE PROCEDURE `CreateDomain`(`title` VARCHAR(255))
+
+BEGIN
+	-- Attempt insertion
+	INSERT IGNORE INTO `Student`(`Title`) VALUES (`title`);
+
+	-- Report results
+	IF ROW_COUNT() > 0 THEN
+		SELECT LAST_INSERT_ID() AS `ID`, 'Success' AS `Message`;
+	ELSE
+		SELECT -1 AS `ID`, 'Failure' AS `Message`;
+	END IF;
+END;//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `DeleteDomain`;
+DELIMITER //
+CREATE PROCEDURE `DeleteDomain`(`domainID` INT)
+BEGIN
+        -- Attempt deletion
+        DELETE FROM `Student` WHERE `ID`=`domainID`;
+END;//
+DELIMITER ;
+
 --
 -- Student Procedures
 --
@@ -125,7 +157,7 @@ BEGIN
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Success' AS `Message`;
 	ELSE
-		SELECT -1 AS `ID`, `Failure` AS `Message`;
+		SELECT -1 AS `ID`, 'Failure' AS `Message`;
 	END IF;
 END;//
 DELIMITER ;
@@ -138,4 +170,32 @@ BEGIN
 	DELETE FROM `Student` WHERE `ID`=`studentID`;
 END;//
 DELIMITER ;
+
+--
+-- Faculty Procedures
+--
+
+DROP PROCEDURE IF EXISTS `CreateFaculty`;
+DELIMITER //
+CREATE PROCEDURE `CreateFaculty`(`username` VARCHAR(255),
+				 `password` VARCHAR(255),
+				 `email` VARCHAR(255),
+				 `creation` BIT,
+				 `firstName` VARCHAR(255),
+				 `lastName` VARCHAR(255),
+				 `dept` VARCHAR(255))
+
+BEGIN 
+	-- Attempt insertion
+	INSERT IGNORE INTO `Faculty`(`Username`, `Password`, `Email`, `CanCreateDomain`, `FirstName`, `LastName`, `Department`, `CreatedOn`)
+	       VALUES(`username`, PASSWORD(`password`), `email`, `creation`, `firstName`, `lastName`, `dept`, NOW());
+
+	IF ROW_COUNT() > 0 THEN
+		SELECT LAST_INSERT_ID() AS `UserID`, `username` AS `Username`, 'Success' AS `Message`;
+	ELSE
+		SELECT -1 AS `UserID`, 'Failure' AS `Message`;
+	END IF;
+END;// 
+DELIMITER ;
+
 
