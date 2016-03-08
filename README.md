@@ -1,1 +1,1 @@
-# mccore
+# mccoredb
