@@ -1,8 +1,8 @@
 -- Generation Script for DB Project
--- WILL DROP EVERY TABLE BEFORE CREATION 
+-- WILL DROP EVERY TABLE BEFORE CREATION
 
 --
--- Delete tables if currently existing 
+-- Delete tables if currently existing
 --
 
 DROP TABLE IF EXISTS `RubricItemResponse`;
@@ -107,18 +107,17 @@ CREATE TABLE `RubricItemResponse` (
 	CONSTRAINT `fk_RIRRubricItemID` FOREIGN KEY (`RubricItemID`) REFERENCES `RubricItem`(`ID`)
 );
 
--- 
+--
 -- Procedures
 --
 
--- 
+--
 -- Domain
 --
 
 DROP PROCEDURE IF EXISTS `CreateDomain`;
 DELIMITER //
 CREATE PROCEDURE `CreateDomain`(`title` VARCHAR(255))
-
 BEGIN
 	-- Attempt insertion
 	INSERT IGNORE INTO `Student`(`Title`) VALUES (`title`);
@@ -145,6 +144,7 @@ DELIMITER ;
 -- Student Procedures
 --
 
+-- CreateStudent
 DROP PROCEDURE IF EXISTS `CreateStudent`;
 DELIMITER //
 CREATE PROCEDURE `CreateStudent`(`firstName` VARCHAR(255),
@@ -152,7 +152,7 @@ CREATE PROCEDURE `CreateStudent`(`firstName` VARCHAR(255),
 BEGIN
 	-- Attempt insertion
 	INSERT IGNORE INTO `Student`(`FirstName`, `LastName`) VALUES (`firstName`, `lastName`);
-	
+
 	-- Report results
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Success' AS `Message`;
@@ -162,6 +162,7 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- DeleteStudent
 DROP PROCEDURE IF EXISTS `DeleteStudent`;
 DELIMITER //
 CREATE PROCEDURE `DeleteStudent`(`studentID` INT)
@@ -171,10 +172,32 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- GetStudentInfo
+DROP PROCEDURE IF EXISTS `GetStudentInfo`;
+DELIMITER //
+CREATE PROCEDURE `GetStudentInfo`(`studentID`)
+BEGIN
+	SELECT `ID` AS `ID`, `FirstName` AS `First Name`, `LastName` AS `Last Name`
+		FROM `Student`
+		WHERE `ID` = `studentID`;
+END;//
+DELIMITER ;
+
+-- GetAllStudents
+DROP PROCEDURE IF EXISTS `GetAllStudents`
+DELIMITER //
+CREATE PROCEDURE `GetAllStudents`()
+BEGIN
+	SELECT `ID` AS `ID`, `FirstName` AS `First Name`, `LastName` AS `Last Name`
+		FROM `Student`
+END;//
+DELIMITER ;
+
 --
 -- Faculty Procedures
 --
 
+-- CreateFaculty
 DROP PROCEDURE IF EXISTS `CreateFaculty`;
 DELIMITER //
 CREATE PROCEDURE `CreateFaculty`(`username` VARCHAR(255),
@@ -184,8 +207,7 @@ CREATE PROCEDURE `CreateFaculty`(`username` VARCHAR(255),
 				 `firstName` VARCHAR(255),
 				 `lastName` VARCHAR(255),
 				 `dept` VARCHAR(255))
-
-BEGIN 
+BEGIN
 	-- Attempt insertion
 	INSERT IGNORE INTO `Faculty`(`Username`, `Password`, `Email`, `CanCreateDomain`, `FirstName`, `LastName`, `Department`, `CreatedOn`)
 	       VALUES(`username`, PASSWORD(`password`), `email`, `creation`, `firstName`, `lastName`, `dept`, NOW());
@@ -195,7 +217,81 @@ BEGIN
 	ELSE
 		SELECT -1 AS `UserID`, 'Failure' AS `Message`;
 	END IF;
-END;// 
+END;//
+DELIMITER ;
+
+-- DeleteFaculty
+DROP PROCEDURE IF EXISTS `DeleteFaculty`;
+DELIMITER //
+CREATE PROCEDURE `DeleteFaculty`(`facultyID` INT)
+BEGIN
+	-- Attempt deletion
+	DELETE FROM `Faculty` WHERE `ID`=`facultyID`;
+END;//
+DELIMITER ;
+
+-- PromoteFaculty
+DROP PROCEDURE IF EXISTS `PromoteFaculty`;
+DELIMITER //
+CREATE PROCEDURE `PromoteFaculty`(`facultyID` INT)
+BEGIN
+	UPDATE IGNORE `Faculty` SET `CanCreateDomain` = 1 WHERE `ID` = `facultyID`;
+
+	IF ROW_COUNT() > 0 THEN
+		SELECT `facultyID` AS `ID`, 'Promotion Successful' AS `Message`;
+	ELSE
+		SELECT -1 AS `ID`, 'Promotion Failed' AS `Message`;
+		END IF;
+END;//
+DELIMITER ;
+
+-- DemoteFaculty
+DROP PROCEDURE IF EXISTS `DemoteFaculty`;
+DELIMITER //
+CREATE PROCEDURE `PromoteFaculty`(`facultyID` INT)
+BEGIN
+	UPDATE IGNORE `Faculty` SET `CanCreateDomain` = 0 WHERE `ID`  = `facultyID`;
+
+	IF ROW_COUNT() > 0 THEN
+		SELECT `facultyID` AS `ID`, 'Demotion Successful' AS `Message`;
+	ELSE
+		SELECT -1 AS `ID`, 'Demotion Failed' AS `Message`;
+	END IF;
+END;//
+DELIMITER ;
+
+-- ChangeFacultyPassword
+DROP PROCEDURE IF EXISTS `ChangeFacultyPassword`;
+DELIMITER //
+CREATE PROCEDURE `ChangeFacultyPassword`(`facultyID` INT, `newPassword` VARCHAR(255))
+BEGIN
+	UPDATE IGNORE `Faculty` SET `Password` = PASSWORD(`newPassword`) WHERE `ID` = `facultyID`;
+
+	IF ROW_COUNT() > 0 THEN
+		SELECT `facultyID` AS `ID`, 'Password changed successfully' as `Message`;
+	ELSE
+		SELECT -1 AS `ID`, 'Password change failed.' AS `Message`;
+END;//
 DELIMITER ;
 
 
+-- LogFacultyIn
+
+DROP PROCEDURE IF EXISTS `LogFacultyIn`;
+DELIMITER //
+CREATE PROCEDURE `LogFacultyIn`(`username` VARCHAR(255), `password` VARCHAR(255))
+BEGIN
+	DECLARE FacID INT DEFAULT -1;
+	SELECT `ID`
+		FROM `Faculty`
+		WHERE `Username` = `username` AND `Password` = PASSWORD(`password`)
+		INTO FacID;
+
+		-- Handle success and Failure
+		IF FacID > 0 THEN
+			SELECT FacID AS `ID`, 'Login Successful' AS `Message`;
+		ELSE
+			SELECT -1 AS `ID`, 'Login Failed' AS `Message`;
+		END IF;
+END;//
+DELIMITER ;
