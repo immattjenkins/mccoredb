@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS `Faculty`;
 CREATE TABLE `Faculty` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`Username` VARCHAR(255) NOT NULL,
-  `Password` VARCHAR(255) NOT NULL,
+  	`Password` VARCHAR(255) NOT NULL,
 	`CanCreateDomain` VARCHAR(255) NOT NULL,
 	`FirstName` VARCHAR(255) NOT NULL,
 	`LastName` VARCHAR(255) NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE `Prospectus` (
 );
 
 CREATE TABLE `Student` (
-	`CollegeID` VARCHAR(255) AUTO_INCREMENT PRIMARY KEY,
+	`ID` VARCHAR(50) PRIMARY KEY,
 	`FirstName` VARCHAR(255) NOT NULL,
 	`LastName` VARCHAR(255) NOT NULL
 );
@@ -161,7 +161,7 @@ DELIMITER //
 CREATE PROCEDURE `ListAllDomains`()
 BEGIN
 	SELECT `ID`, `Title`, `Department`
-		FROM `Domain`
+		FROM `Domain`;
 END;//
 DELIMITER ;
 
@@ -186,12 +186,12 @@ BEGIN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Prospectus Created' AS `Message`;
 	ELSE
 		SELECT -1 AS `ID`, 'Prospectus Creation Failed' AS `Message`;
-	ENDIF
+	END IF;
 END;//
 DELIMITER ;
 
 -- DeleteProspectus
-DROP PROCEDURE IF EXISTS `DeleteProspectus`
+DROP PROCEDURE IF EXISTS `DeleteProspectus`;
 DELIMITER //
 CREATE PROCEDURE `DeleteProspectus`(`prospectusID` INT)
 BEGIN
@@ -376,7 +376,7 @@ DROP PROCEDURE IF EXISTS `CreateCourse`;
 DELIMITER //
 CREATE PROCEDURE `CreateCourse`(`name` VARCHAR(255), `prospectusID` INT, `facultyID` INT)
 BEGIN
-	INSERT IGNORE INTO `Course`(`Name`, `ProspectusID`, `FacultyID`) VALUES(`name`, `prospectusID`, `facultyID`)
+	INSERT IGNORE INTO `Course`(`Name`, `ProspectusID`, `FacultyID`) VALUES(`name`, `prospectusID`, `facultyID`);
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Course created' AS `Message`;
@@ -419,7 +419,7 @@ DROP PROCEDURE IF EXISTS `DeleteSection`;
 DELIMITER //
 CREATE PROCEDURE `DeleteSection`(`sectionID` INT)
 BEGIN
-	DELETE FROM `Section` WHERE `ID` = `sectionID`
+	DELETE FROM `Section` WHERE `ID` = `sectionID`;
 END;//
 DELIMITER ;
 
@@ -529,7 +529,7 @@ DELIMITER ;
 -- CreateRubricItemResponse
 DROP PROCEDURE IF EXISTS `CreateRubricItemResponse`;
 DELIMITER //
-CREATE PROCEDURE `CreateRubricItemResponse`(`score` INT, `comment` TXT, `studentID` VARCHAR(50), `rubricItemID` INT)
+CREATE PROCEDURE `CreateRubricItemResponse`(`score` INT, `comment` TEXT, `studentID` VARCHAR(50), `rubricItemID` INT)
 BEGIN
 
 	INSERT INTO `RubricItemResponse`(`Score`, `Comment`, `StudentID`, `RubricItemID`) VALUES(`score`, `comment`, `studentID`, `rubricItemID`);
@@ -556,11 +556,12 @@ DROP PROCEDURE IF EXISTS `UpdateRIRComment`;
 DELIMITER //
 CREATE PROCEDURE `UpdateRIRComment`(`rirID` INT, `comment` TEXT)
 BEGIN
-	UPDATE IGNORE `UpdateRIRComment` SET `Comment` = `comment` WHERE `ID` = `rirID`;
+	UPDATE IGNORE `RubricItemResponse` SET `Comment` = `comment` WHERE `ID` = `rirID`;
 	IF ROW_COUNT() > 0 THEN
-		SELECT `rirID` AS `ID`, 'Comment updated successfull' AS `Message`;
+		SELECT `rirID` AS `ID`, 'Comment updated successfully' AS `Message`;
 	ELSE
 		SELECT -1 AS `ID`, 'Comment update failed' AS `Message`;
+	END IF;
 END;//
 DELIMITER ;
 
@@ -569,10 +570,11 @@ DROP PROCEDURE IF EXISTS `UpdateRIRScore`;
 DELIMITER //
 CREATE PROCEDURE `UpdateRIRScore`(`rirID` INT, `score` TEXT)
 BEGIN
-	UPDATE IGNORE `UpdateRIRScore` SET `Score` = `score` WHERE `ID` = `rirID`;
+	UPDATE IGNORE `RubricItemResponse` SET `Score` = `score` WHERE `ID` = `rirID`;
 	IF ROW_COUNT() > 0 THEN
-		SELECT `rirID` AS `ID`, 'Score updated successfull' AS `Message`;
+		SELECT `rirID` AS `ID`, 'Score updated successfully' AS `Message`;
 	ELSE
 		SELECT -1 AS `ID`, 'Score update failed' AS `Message`;
+	END IF;
 END;//
 DELIMITER ;
