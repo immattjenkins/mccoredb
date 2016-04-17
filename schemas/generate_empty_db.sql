@@ -24,7 +24,8 @@ CREATE TABLE `Faculty` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`Username` VARCHAR(255) NOT NULL,
   	`Password` VARCHAR(255) NOT NULL,
-	`CanCreateDomain` VARCHAR(255) NOT NULL,
+	`Email` VARCHAR(255) NOT NULL,
+	`CanCreateDomain` BIT NOT NULL,
 	`FirstName` VARCHAR(255) NOT NULL,
 	`LastName` VARCHAR(255) NOT NULL,
 	`Department` VARCHAR(255) NOT NULL,
@@ -350,17 +351,17 @@ DELIMITER ;
 -- LogFacultyIn
 DROP PROCEDURE IF EXISTS `LogFacultyIn`;
 DELIMITER //
-CREATE PROCEDURE `LogFacultyIn`(`username` VARCHAR(255), `password` VARCHAR(255))
+CREATE PROCEDURE `LogFacultyIn`(`uname` VARCHAR(255), `pass` VARCHAR(255))
 BEGIN
-	DECLARE FacID INT DEFAULT -1;
+	DECLARE userID INT DEFAULT -1;
 	SELECT `ID`
 		FROM `Faculty`
-		WHERE `Username` = `username` AND `Password` = PASSWORD(`password`)
-		INTO FacID;
+		WHERE `Username` = `uname` AND `Password` = PASSWORD(`pass`)
+		INTO userID;
 
 		-- Handle success and Failure
-		IF FacID > 0 THEN
-			SELECT FacID AS `ID`, 'Login Successful' AS `Message`;
+		IF userID > 0 THEN
+			SELECT userID AS `ID`, 'Login Successful' AS `Message`;
 		ELSE
 			SELECT -1 AS `ID`, 'Login Failed' AS `Message`;
 		END IF;
@@ -578,3 +579,7 @@ BEGIN
 	END IF;
 END;//
 DELIMITER ;
+
+
+-- Create a test user
+CALL `CreateFaculty`("admin", "changeme", "m@mj.me", 1, "Matt", "Jenkins", "CSC");
