@@ -14,9 +14,13 @@
         </div>
         <div id="menu">
           <ul class="menu-links">
-              <a href="#l1"><li class="current">HOME</li></a>
-              <a href="#l2"><li>CLASSES</li></a>
-              <a href="#l3"><li>STATS</li></a>
+              <a href="dashboard.php"><li class="current">HOME</li></a>
+	      <?php if($_SESSION['canCreate'] == 1): ?> 
+	        <a href="domains.php"><li>DOMAIN</li></a>
+	      <?php endif;?>
+	      <a href="prospectus.php"><li>PROSPECTUS</li></a>
+              <a href="classes.php"><li>CLASSES</li></a>
+              <a href="stats.php"><li>STATS</li></a>
               <a href="index.php?logout=true"><li>LOGOUT</li></a>
           </ul>
         </div>

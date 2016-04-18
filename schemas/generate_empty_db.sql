@@ -34,7 +34,9 @@ CREATE TABLE `Faculty` (
 
 CREATE TABLE `Domain` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
-	`Title` VARCHAR(255) NOT NULL
+	`Title` VARCHAR(255) NOT NULL,
+	`FacultyID` INT NOT NULL,
+	CONSTRAINT `fkFacultyDomainID` FOREIGN KEY (`FacultyID`) REFERENCES `Faculty`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE	
 );
 -- Contains CreateDomain, DeleteDomain procedures
 
@@ -121,10 +123,10 @@ CREATE TABLE `RubricItemResponse` (
 -- CreateDomain
 DROP PROCEDURE IF EXISTS `CreateDomain`;
 DELIMITER //
-CREATE PROCEDURE `CreateDomain`(`title` VARCHAR(255), `dept` VARCHAR(255))
+CREATE PROCEDURE `CreateDomain`(`title` VARCHAR(255), facID INT)
 BEGIN
 	-- Attempt insertion
-	INSERT IGNORE INTO `Student`(`Title`, `Department`) VALUES (`title`, `dept`);
+	INSERT IGNORE INTO `Domain`(`Title`, `FacultyID`) VALUES (`title`, `facID`);
 
 	-- Report results
 	IF ROW_COUNT() > 0 THEN
@@ -138,10 +140,10 @@ DELIMITER ;
 -- DeleteDomain
 DROP PROCEDURE IF EXISTS `DeleteDomain`;
 DELIMITER //
-CREATE PROCEDURE `DeleteDomain`(`domainID` INT)
+CREATE PROCEDURE `DeleteDomain`(`domainID` INT, `facID` INT)
 BEGIN
         -- Attempt deletion
-        DELETE FROM `Student` WHERE `ID`=`domainID`;
+        DELETE FROM `Domain` WHERE `ID`=`domainID` AND `FacultyID`=`facID`;
 END;//
 DELIMITER ;
 
@@ -150,7 +152,7 @@ DROP PROCEDURE IF EXISTS `GetDomainInfo`;
 DELIMITER //
 CREATE PROCEDURE `GetDomainInfo`(`domainID` INT)
 BEGIN
-	SELECT `ID`, `Title`, `Department`
+	SELECT `ID`, `Title`
 		FROM `Domain`
 		WHERE `ID` = `domainID`;
 END;//
@@ -159,10 +161,11 @@ DELIMITER ;
 -- GetAllDomains
 DROP PROCEDURE IF EXISTS `ListAllDomains`;
 DELIMITER //
-CREATE PROCEDURE `ListAllDomains`()
+CREATE PROCEDURE `ListAllDomains`(`facID` INT)
 BEGIN
-	SELECT `ID`, `Title`, `Department`
-		FROM `Domain`;
+	SELECT `ID`, `Title`
+		FROM `Domain`
+		WHERE `FacultyID` = `facID`;
 END;//
 DELIMITER ;
 
@@ -354,16 +357,17 @@ DELIMITER //
 CREATE PROCEDURE `LogFacultyIn`(`uname` VARCHAR(255), `pass` VARCHAR(255))
 BEGIN
 	DECLARE userID INT DEFAULT -1;
-	SELECT `ID`
+	DECLARE userCanCreate INT DEFAULT -1;
+	SELECT `ID`, `CanCreateDomain`
 		FROM `Faculty`
 		WHERE `Username` = `uname` AND `Password` = PASSWORD(`pass`)
-		INTO userID;
+		INTO userID, userCanCreate;
 
 		-- Handle success and Failure
 		IF userID > 0 THEN
-			SELECT userID AS `ID`, 'Login Successful' AS `Message`;
+			SELECT userID AS `ID`, userCanCreate AS `Create`, 'Login Successful' AS `Message`;
 		ELSE
-			SELECT -1 AS `ID`, 'Login Failed' AS `Message`;
+			SELECT -1 AS `ID`, 0 AS `Create`, 'Login Failed' AS `Message`;
 		END IF;
 END;//
 DELIMITER ;
@@ -583,3 +587,4 @@ DELIMITER ;
 
 -- Create a test user
 CALL `CreateFaculty`("admin", "changeme", "m@mj.me", 1, "Matt", "Jenkins", "CSC");
+CALL `CreateFaculty`("admin2", "changeme", "m@mj.me", 0, "Matt", "Jenkins", "CSC");

@@ -7,15 +7,16 @@ if(isset($_REQUEST['username'])) {
 
   if($result['userID'] == -1) {
     $loginFailed = true;
-    var_dump($result);
   } else {
     $_SESSION['userID'] = $result['userID'];
+    $_SESSION['canCreate'] = $result['create'];
     $_SESSION['username'] = $_REQUEST['username'];
     $loginFailed = false;
   }
 } else if(isset($_REQUEST['logout'])) {
   $_SESSION['userID'] = -1;
   $_SESSION['username'] = "";
+  $_SESSION['canCreate'] = 0;
 } else {
   $loginFailed = false;
 }
