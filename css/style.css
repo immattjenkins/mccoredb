@@ -4,14 +4,29 @@ body {
   font-family: Georgia;
   margin: 0;
   padding: 0;
+  overflow-y: scroll;
 }
 
 p {
   font-size: 14pt;
-  line-height: 18pt;
+  line-height: 15pt;
 }
 
 /* Styling */
+
+input {
+  border: 2px solid #aaa;
+  padding: 10px;
+  color: #3b3b3b;
+  margin: 10px auto;
+  font-weight: bold;
+  font-size: 12pt;
+}
+
+input:focus {
+  border: 2px solid #E66C1E;
+}
+
 
 .center {
   text-align: center;
@@ -117,6 +132,23 @@ p {
   width: 60%;
   padding: 3% 0%;
   color: #fff;
+  font-size: 14pt;
+}
+
+#content ul {
+  color: #E66C1E;
+}
+
+#content a {
+  color: #fff;
+}
+
+#content a:hover {
+  color: #bbb;
+}
+
+#content li {
+  padding: 5px 0px;
 }
 
 /* END Content */

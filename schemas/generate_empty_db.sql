@@ -150,11 +150,13 @@ DELIMITER ;
 -- GetDomainInfo
 DROP PROCEDURE IF EXISTS `GetDomainInfo`;
 DELIMITER //
-CREATE PROCEDURE `GetDomainInfo`(`domainID` INT)
+CREATE PROCEDURE `GetDomainInfo`(`domainID` INT, `facID` INT)
 BEGIN
 	SELECT `ID`, `Title`
 		FROM `Domain`
-		WHERE `ID` = `domainID`;
+		WHERE `ID` = `domainID`
+			AND `FacultyID` = `facID`;
+	
 END;//
 DELIMITER ;
 
@@ -166,6 +168,18 @@ BEGIN
 	SELECT `ID`, `Title`
 		FROM `Domain`
 		WHERE `FacultyID` = `facID`;
+END;//
+DELIMITER ;
+
+-- UpdateDomainInfo
+DROP PROCEDURE IF EXISTS `UpdateDomainInfo`;
+DELIMITER //
+CREATE PROCEDURE `UpdateDomainInfo`(`domainID` INT, `domainTitle` VARCHAR(255), `facID` INT)
+BEGIN
+	UPDATE `Domain` 
+		SET `Title` = `domainTitle`
+		WHERE `ID` = `domainID`
+			AND `FacultyID` = `facID`;
 END;//
 DELIMITER ;
 

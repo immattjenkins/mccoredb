@@ -95,3 +95,48 @@ function getAllDomains($userID) {
   return $res;
 
 }
+
+function getDomainInfo($domainID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetDomainInfo`(?, ?)");
+  $stmt->bind_param("ii", $domainID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function updateDomainInfo($domainID, $domainTitle, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `UpdateDomainInfo`(?, ?, ?)");
+  $stmt->bind_param("isi", $domainID, $domainTitle, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function deleteDomain($domainID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `DeleteDomain`(?, ?)");
+  $stmt->bind_param("ii", $domainID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}

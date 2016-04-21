@@ -1,7 +1,3 @@
-<?php 
-  session_start();
-?>
-
 <h1>Your Classes</h1>
 
 <p>This is the control panel for your classes. You can create, manage, and delete coures you teach here.</p>
@@ -12,7 +8,7 @@
   <select>
     <option value="X">2016 Prospectus</option>
   </select>
-  <button id="submit_create" name="submit_create" type="submit">Create</button>
+  <button id="submit_create" class="orange_button button" name="submit_create" type="submit">Create</button>
 </form>
 
 <h2>Manage Your Classes</h2>

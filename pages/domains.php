@@ -1,6 +1,6 @@
 <h1>Domains</h1>
 
-<p>Create and delete domains.</p>
+<p>Create, manage, and delete domains that you are considered to be the owner of as the one in charge of your division's domain and prospectus.</p>
 
 <h2>Create a Domain</h2>
 <form id="create_domain_form" method="POST">
@@ -11,6 +11,6 @@
 <h2>Manage Your Domains</h2>
   <ul>
     <?php foreach($domainList as $domain): ?>
-    <a href="editDomain.php?id=<?php echo $domain['FacultyID']?>"><li><?php echo $domain['Title']; ?></li></a>
+    <li><a href="editDomain.php?id=<?php echo $domain['ID']?>"><?php echo $domain['Title']; ?></a> <a href="domains.php?deleteID=<?php echo $domain['ID']?>">(delete)</a></li>
     <?php endforeach; ?>
   </ul>
