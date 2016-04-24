@@ -9,6 +9,9 @@ if(mysqli_connect_errno()) {
   die("MC CoreDB cannot establish connection.");
 }
 
+//List of Departments
+$departments = array("Behavioral Sciences", "Education", "Fine Arts", "Humanities", "Languages and Literature", "Mathematics and Computer Science", "Natural Sciences", "Social Sciences");
+
 function singleRowStatement($stmt) 
 {
   //run the statement and fetch the result
@@ -56,6 +59,27 @@ function logUserIn($user, $pass) {
   $stmt->close();
 
   return $res;
+
+}
+
+function createUser($user, $pass, $email, $firstName, $lastName, $dept) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $create = 0;
+  $stmt = $mysqli->prepare("CALL CreateFaculty(?, ?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param("sssisss", $user, $pass, $email, $create, $firstName, $lastName, $dept);
+
+  // Run statement and fetch results
+  $res = array();
+  $stmt->execute();
+  $stmt->bind_result($res['userID'], $res['username'], $res['message']);
+  $stmt->fetch();
+  $stmt->close();
+
+  return $res;
+
 
 }
 

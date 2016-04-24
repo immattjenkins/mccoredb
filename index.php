@@ -25,8 +25,8 @@ if(isset($_SESSION['userID']) && $_SESSION['userID'] > -1) {
         <input id="username" class="login_input" name="username" type="text" placeholder="Username" />
         <input id="password" class="login_input" name="password" type="password" placeholder="Password"/>
         <div id="buttons" class="center">
-          <button id="create_user" class="button secondary_button" name="create_user">Register</button>
-          <button id="submit_login" class="button orange_button login_button" name="submit_login" value="login">Login</button>
+        <a href="register.php" class="button secondary_button">Register</a>  
+	<button id="submit_login" class="button orange_button login_button" name="submit_login" value="login">Login</button>
         </div>
       </form>
     </div>

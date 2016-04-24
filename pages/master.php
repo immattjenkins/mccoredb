@@ -13,6 +13,7 @@
           <img src="img/logo.svg" alt="M.C. CoreDB" />
         </div>
         <div id="menu">
+	  <?php if(isset($_SESSION['userID']) && $_SESSION['userID'] > 0): ?>
           <ul class="menu-links">
               <a href="dashboard.php"><li class="current">HOME</li></a>
 	      <?php if($_SESSION['canCreate'] == 1): ?> 
@@ -23,6 +24,7 @@
               <a href="stats.php"><li>STATS</li></a>
               <a href="index.php?logout=true"><li>LOGOUT</li></a>
           </ul>
+	  <?php endif;?>
         </div>
       </div>
     </div>
