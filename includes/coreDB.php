@@ -8,7 +8,8 @@ include_once('data.php');
 session_start();
 
 if(!isset($_SESSION["userID"])) {
-	$_SESSION["userID"] = -1;
+  $_SESSION["userID"] = -1;
+} else if($_SESSION['userID'] == -1) {
 }
 
 //include_once('login.php');

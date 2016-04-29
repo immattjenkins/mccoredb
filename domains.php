@@ -4,7 +4,7 @@ include_once('includes/coreDB.php');
 
 //TODO: Make sure they have permissions
 if(isset($_REQUEST['create_domain'])) {
-  createDomain($_REQUEST['domain_name'], $_SESSION['userID']);
+  $res = createDomain($_REQUEST['domain_name'], $_SESSION['dept'], $_SESSION['userID']);
 }
 
 if(isset($_REQUEST['deleteID'])) {

@@ -35,6 +35,7 @@ CREATE TABLE `Faculty` (
 CREATE TABLE `Domain` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`Title` VARCHAR(255) NOT NULL,
+	`Department` VARCHAR(255) NOT NULL,
 	`FacultyID` INT NOT NULL,
 	CONSTRAINT `fkFacultyDomainID` FOREIGN KEY (`FacultyID`) REFERENCES `Faculty`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE	
 );
@@ -42,11 +43,13 @@ CREATE TABLE `Domain` (
 
 CREATE TABLE `Prospectus` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
+	`Name` VARCHAR(255) NOT NULL,
 	`EducationalGoal` LONGTEXT NOT NULL,
 	`LearningOutcome` LONGTEXT NOT NULL,
 	`Description` LONGTEXT NOT NULL,
 	`DomainGoals` LONGTEXT NOT NULL,
 	`RequiredContent` LONGTEXT NOT NULL,
+        `Year` YEAR NOT NULL,
 	`DomainID` INT NOT NULL,
 	CONSTRAINT `fkDomain` FOREIGN KEY (`DomainID`) REFERENCES `Domain`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -123,10 +126,10 @@ CREATE TABLE `RubricItemResponse` (
 -- CreateDomain
 DROP PROCEDURE IF EXISTS `CreateDomain`;
 DELIMITER //
-CREATE PROCEDURE `CreateDomain`(`title` VARCHAR(255), facID INT)
+CREATE PROCEDURE `CreateDomain`(`title` VARCHAR(255), `dept` VARCHAR(255), `facID` INT)
 BEGIN
 	-- Attempt insertion
-	INSERT IGNORE INTO `Domain`(`Title`, `FacultyID`) VALUES (`title`, `facID`);
+	INSERT IGNORE INTO `Domain`(`Title`, `Department`, `FacultyID`) VALUES (`title`, `dept`, `facID`);
 
 	-- Report results
 	IF ROW_COUNT() > 0 THEN
@@ -171,6 +174,16 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- GetDomainsByDepartment
+DROP PROCEDURE IF EXISTS `ListDomainsByDept`;
+DELIMITER //
+CREATE PROCEDURE `ListDomainsByDept`(`dept` VARCHAR(255)) 
+BEGIN
+	SELECT `ID`, `Title`
+		FROM `Domain`
+		WHERE `Department` = `dept`;
+END;//
+DELIMITER ;
 -- UpdateDomainInfo
 DROP PROCEDURE IF EXISTS `UpdateDomainInfo`;
 DELIMITER //
@@ -190,15 +203,15 @@ DELIMITER ;
 -- CreateProspectus
 DROP PROCEDURE IF EXISTS `CreateProspectus`;
 DELIMITER //
-CREATE PROCEDURE `CreateProspectus`(`educationalGoal` LONGTEXT,
+CREATE PROCEDURE `CreateProspectus`(`title` VARCHAR(255), `educationalGoal` LONGTEXT,
 																	 `learningOutcome` LONGTEXT,
 																 	 `desc` LONGTEXT,
 																 	 `domainGoals` LONGTEXT,
 																 	 `requiredContent` LONGTEXT,
 																 	 `domainID` INT)
 BEGIN
-	INSERT IGNORE INTO `Prospectus`(`EducationalGoal`, `LearningOutcome`, `Description`, `DomainGoals`, `RequiredContent`, `DomainID`)
-								VALUES(`educationalGoal`, `learningOutcome`, `desc`, `domainGoals`, `requiredContent`, `domanID`);
+	INSERT IGNORE INTO `Prospectus`(`Name`, `EducationalGoal`, `LearningOutcome`, `Description`, `DomainGoals`, `RequiredContent`, `DomainID`, `Year`)
+								VALUES(`title`, `educationalGoal`, `learningOutcome`, `desc`, `domainGoals`, `requiredContent`, `domainID`, YEAR(NOW()));
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Prospectus Created' AS `Message`;
@@ -222,13 +235,24 @@ DROP PROCEDURE IF EXISTS `GetProspectusInfo`;
 DELIMITER //
 CREATE PROCEDURE `GetProspectusInfo`(`prospectusID` INT)
 BEGIN
-	SELECT `ID`, `EducationalGoal` AS `Educational Goal`, `LearningOutcome` AS `Learning Outcome`,
+	SELECT `ID`, `Name` AS `Name`, `EducationalGoal` AS `Educational Goal`, `LearningOutcome` AS `Learning Outcome`,
 			`Desription`, `DomainGoals` AS `Domain Goals`, `RequiredContent` AS `Required Content`
 		FROM `Prospectus`
 		WHERE `ID` = `prospectusID`;
 END;//
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `GetProspectusList`;
+DELIMITER //
+CREATE PROCEDURE `GetProspectusList`(`facID` INT)
+BEGIN
+	SELECT `Prospectus`.`ID`, `Name`
+		FROM `Prospectus`
+		INNER JOIN `Faculty` ON `Faculty`.`ID` = `facID`
+		INNER JOIN `Domain` ON `Prospectus`.`DomainID` = `Domain`.`ID`
+		WHERE `Domain`.`Department` = `Faculty`.`Department`;
+END;//
+DELIMITER ;
 --
 -- Student Procedures
 --
@@ -372,16 +396,17 @@ CREATE PROCEDURE `LogFacultyIn`(`uname` VARCHAR(255), `pass` VARCHAR(255))
 BEGIN
 	DECLARE userID INT DEFAULT -1;
 	DECLARE userCanCreate INT DEFAULT -1;
-	SELECT `ID`, `CanCreateDomain`
+	DECLARE dept VARCHAR(255) DEFAULT NULL;
+	SELECT `ID`, `CanCreateDomain`, `Department`
 		FROM `Faculty`
 		WHERE `Username` = `uname` AND `Password` = PASSWORD(`pass`)
-		INTO userID, userCanCreate;
+		INTO userID, userCanCreate, dept;
 
 		-- Handle success and Failure
 		IF userID > 0 THEN
-			SELECT userID AS `ID`, userCanCreate AS `Create`, 'Login Successful' AS `Message`;
+			SELECT userID AS `ID`, userCanCreate AS `Create`, dept AS `Department`, 'Login Successful' AS `Message`;
 		ELSE
-			SELECT -1 AS `ID`, 0 AS `Create`, 'Login Failed' AS `Message`;
+			SELECT -1 AS `ID`, 0 AS `Create`, dept AS `Department`, 'Login Failed' AS `Message`;
 		END IF;
 END;//
 DELIMITER ;
@@ -601,4 +626,4 @@ DELIMITER ;
 
 -- Create a test user
 CALL `CreateFaculty`("admin", "changeme", "m@mj.me", 1, "Matt", "Jenkins", "CSC");
-CALL `CreateFaculty`("admin2", "changeme", "m@mj.me", 0, "Matt", "Jenkins", "CSC");
+CALL `CreateFaculty`("admin2", "changeme", "m@mj.me", 0, "Matt", "Jenkins", "MTH");

@@ -16,7 +16,7 @@
 
   <label for="registerDepartment">Department</label>
   <select id="registerDepartment" name="registerDepartment">
-    <option value="" disabled selected hidden>Please choose your department</option>
+    <option value="Unset" disabled selected hidden>Please choose your department</option>
 
     <?php foreach($departments as $department): ?>
       <option value="<?php echo $department ?>"><?php echo $department ?></option>

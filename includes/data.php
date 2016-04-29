@@ -54,7 +54,7 @@ function logUserIn($user, $pass) {
   // Run statement and fetch results
   $res = array();
   $stmt->execute();
-  $stmt->bind_result($res['userID'], $res['create'], $res['message']);
+  $stmt->bind_result($res['userID'], $res['create'], $res['dept'], $res['message']);
   $stmt->fetch();
   $stmt->close();
 
@@ -83,14 +83,14 @@ function createUser($user, $pass, $email, $firstName, $lastName, $dept) {
 
 }
 
-function createDomain($name, $userID) {
+function createDomain($name, $dept, $userID) {
   
   // Grab global var mysqli
   global $mysqli;
 
   // Set up prepared statement
-  $stmt = $mysqli->prepare("CALL `CreateDomain`(?, ?)");
-  $stmt->bind_param("si", $name, $userID);
+  $stmt = $mysqli->prepare("CALL `CreateDomain`(?, ?, ?)");
+  $stmt->bind_param("ssi", $name, $dept, $userID);
 
   // Run statement and fetch results
   $res = array();
@@ -119,6 +119,24 @@ function getAllDomains($userID) {
   return $res;
 
 }
+
+function getAllDomainsByDept($dept) {
+
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ListDomainsByDept`(?)");
+  $stmt->bind_param("s", $dept);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+
+}
+
 
 function getDomainInfo($domainID, $userID) {
   // Grab global var mysqli
@@ -160,6 +178,21 @@ function deleteDomain($domainID, $userID) {
 
   // Fetch results 
   $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function getProspectusList($userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetProspectusList`(?)");
+  $stmt->bind_param("i", $userID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
   $stmt->close();
 
   return $res;

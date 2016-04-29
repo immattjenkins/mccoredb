@@ -6,7 +6,9 @@
 <form id="create_course">
   <input id="course_name" name="course_name" type="text" placeholder="Enter Course Name"/>
   <select>
-    <option value="X">2016 Prospectus</option>
+      <?php foreach($prospectusList as $prospectus): ?>
+        <option value="<?php echo $prospectus['ID']?>"><?php echo $prospectus['Name'] ?></option>
+      <?php endforeach; ?>
   </select>
   <button id="submit_create" class="orange_button button" name="submit_create" type="submit">Create</button>
 </form>

@@ -3,6 +3,8 @@
 <head>
   <title><?php echo $pageTitle; ?></title>
   <link rel="stylesheet" type="text/css" href="css/style.css"  />
+  <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+  <script>tinymce.init({ selector:'textarea' });</script>
 </head>
 <body>
   <div id="wrapper">
@@ -30,6 +32,15 @@
     </div>
 
     <div id="content">
+	<?php if(isset($messages)): ?>
+	<div id="messages">
+		<ul>
+			<?php foreach($messages as $msg): ?>
+				<li class="<?php echo $msg['class']; ?>"><?php echo $msg['text']; ?></li>
+			<?php endforeach; ?>
+		</ul>
+	</div>	
+	<?php endif; ?>
 	<?php include_once('pages/' . $content);?>
     </div>
 

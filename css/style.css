@@ -10,6 +10,7 @@ body {
 p {
   font-size: 14pt;
   line-height: 15pt;
+  width: 75%;
 }
 
 /* Styling */
