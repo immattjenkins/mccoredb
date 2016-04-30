@@ -22,7 +22,7 @@
 	        <a href="domains.php"><li>DOMAIN</li></a>
 	      <?php endif;?>
 	      <a href="prospectus.php"><li>PROSPECTUS</li></a>
-              <a href="classes.php"><li>CLASSES</li></a>
+              <a href="courses.php"><li>COURSES</li></a>
               <a href="stats.php"><li>STATS</li></a>
               <a href="index.php?logout=true"><li>LOGOUT</li></a>
           </ul>
@@ -34,7 +34,8 @@
     <div id="content">
 	<?php if(isset($messages)): ?>
 	<div id="messages">
-		<ul>
+		<h2>Hold up! There's some errors:</h2>
+                <ul>
 			<?php foreach($messages as $msg): ?>
 				<li class="<?php echo $msg['class']; ?>"><?php echo $msg['text']; ?></li>
 			<?php endforeach; ?>

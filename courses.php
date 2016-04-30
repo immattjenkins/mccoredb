@@ -6,7 +6,7 @@ include_once('includes/coreDB.php');
 
 $prospectusList = getProspectusList($_SESSION['userID']);
 
-$pageTitle = "Your Classes";
-$content = "classes.php";
+$pageTitle = "Your Courses";
+$content = "courses.php";
 
 include_once('pages/master.php');

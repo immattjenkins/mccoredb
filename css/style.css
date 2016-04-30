@@ -191,9 +191,30 @@ a.button, a.secondary_button {
   color: #FFF;
   background: #E66C1E;
 }
+
 .menu-links li:hover  {
     background: #CCC;
     color: #3B3B3B;
 }
 
 /* END Menu Links */
+
+/* MESSAGES */
+
+#messages {
+  background: #DDD;
+  border: 5px solid #E66C1E;
+  padding: 15px;
+}
+
+#messages h2 {
+  color: #EE6C1E;
+} 
+
+.failure { 
+  color: red;
+}
+
+.success {
+  color: green;
+}

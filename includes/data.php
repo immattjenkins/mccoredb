@@ -197,3 +197,64 @@ function getProspectusList($userID) {
 
   return $res;
 }
+
+function getProspectusInfo($prospectusID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetProspectusInfo`(?, ?)");
+  $stmt->bind_param("ii", $prospectusID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function createProspectus($id, $name, $edGoals, $learnOutcomes, $desc, $domainGoals, $requiredContent) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CreateProspectus`(?, ?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param("sssssss", $name, $edGoals, $learnOutcomes, $desc, $domainGoals, $requiredContent, $id);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function updateProspectus($id, $name, $edGoals, $learnOutcomes, $desc, $domainGoals, $requiredContent) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `UpdateProspectus`(?, ?, ?, ?, ?, ?, ?)");
+  $stmt->bind_param("sssssss", $name, $edGoals, $learnOutcomes, $desc, $domainGoals, $requiredContent, $id);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function deleteProspectus($prospectusID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `deleteProspectus`(?, ?)");
+  $stmt->bind_param("ii", $prospectusID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+

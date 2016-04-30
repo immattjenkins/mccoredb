@@ -2,8 +2,6 @@
 
 include_once('includes/coreDB.php');
 
-$messages = array();
-
 if(isset($_REQUEST['createaccount'])) {
   $username = $_REQUEST['registerUsername'];
   $password = $_REQUEST['registerPassword'];
@@ -19,7 +17,8 @@ if(isset($_REQUEST['createaccount'])) {
   }
 
   $valid = true;
-
+  
+  // TODO:
   // Check username availability
   // Check that emails are not in use yet / availability
 

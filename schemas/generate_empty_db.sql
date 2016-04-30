@@ -221,24 +221,57 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- UpdateProspectus
+DROP PROCEDURE IF EXISTS `UpdateProspectus`;
+DELIMITER //
+CREATE PROCEDURE `UpdateProspectus`(`title` VARCHAR(255), `educationalGoal` LONGTEXT,
+                                                                                                                                         `learningOutcome` LONGTEXT,
+                                                                                                                                         `desc` LONGTEXT,
+                                                                                                                                         `domainGoals` LONGTEXT,
+                                                                                                                                         `requiredContent` LONGTEXT,
+                                                                                                                                         `prospectusID` INT)
+BEGIN
+
+	UPDATE `Prospectus`
+		SET `EducationalGoal` = `educationalGoal`,
+			`Name` = `title`,
+			`LearningOutcome` = `learningOutcome`,
+			`Description` = `desc`,
+			`DomainGoals` = `domainGoals`,
+			`RequiredContent` = `requiredContent`
+		WHERE `ID` = `prospectusID`;
+
+        IF ROW_COUNT() > 0 THEN
+                SELECT LAST_INSERT_ID() AS `ID`, 'Prospectus Updated' AS `Message`;
+        ELSE
+                SELECT -1 AS `ID`, 'Prospectus Update Failed' AS `Message`;
+        END IF; 
+END;//
+DELIMITER ;
+
 -- DeleteProspectus
 DROP PROCEDURE IF EXISTS `DeleteProspectus`;
 DELIMITER //
-CREATE PROCEDURE `DeleteProspectus`(`prospectusID` INT)
+CREATE PROCEDURE `DeleteProspectus`(`prospectusID` INT, `facID` INT)
 BEGIN
-	DELETE FROM `Prospectus` WHERE `ID` = `prospectusID`;
+	DELETE P FROM `Prospectus` P 
+                INNER JOIN `Faculty` ON `Faculty`.`ID` = `facID`
+                INNER JOIN `Domain` ON `P`.`DomainID` = `Domain`.`ID`
+                WHERE `P`.`ID` = `prospectusID` AND `Domain`.`Department` = `Faculty`.`Department`;
 END;//
 DELIMITER ;
 
 -- GetProspectusInfo
 DROP PROCEDURE IF EXISTS `GetProspectusInfo`;
 DELIMITER //
-CREATE PROCEDURE `GetProspectusInfo`(`prospectusID` INT)
+CREATE PROCEDURE `GetProspectusInfo`(`prospectusID` INT, `facID` INT)
 BEGIN
-	SELECT `ID`, `Name` AS `Name`, `EducationalGoal` AS `Educational Goal`, `LearningOutcome` AS `Learning Outcome`,
-			`Desription`, `DomainGoals` AS `Domain Goals`, `RequiredContent` AS `Required Content`
+	SELECT `Prospectus`.`ID`, `Name` AS `Name`, `EducationalGoal` AS `Educational Goal`, `LearningOutcome` AS `Learning Outcome`,
+			`Description`, `DomainGoals` AS `Domain Goals`, `RequiredContent` AS `Required Content`, `Year`
 		FROM `Prospectus`
-		WHERE `ID` = `prospectusID`;
+                INNER JOIN `Faculty` ON `Faculty`.`ID` = `facID`
+                INNER JOIN `Domain` ON `Prospectus`.`DomainID` = `Domain`.`ID`
+                WHERE `Prospectus`.`ID` = `prospectusID` AND `Domain`.`Department` = `Faculty`.`Department`;
 END;//
 DELIMITER ;
 
@@ -433,9 +466,18 @@ DELIMITER ;
 -- DeleteCourse
 DROP PROCEDURE IF EXISTS `DeleteCourse`;
 DELIMITER //
-CREATE PROCEDURE `DeleteCourse`(`courseID` INT)
+CREATE PROCEDURE `DeleteCourse`(`courseID` INT, `facID` INT)
 BEGIN
-	DELETE FROM `Course` WHERE `ID` = `courseID`;
+	DELETE FROM `Course` WHERE `ID` = `courseID` AND `FacultyID` = `facID`;
+END;//
+DELIMITER ;
+
+-- GetCourseList
+DROP PROCEDURE IF EXISTS `GetCourseList`;
+DELIMITER //
+CREATE PROCEDURE `GetCourseList`(`facID` INT)
+BEGIN
+	SELECT `ID`, `Name`, `ProspectusID` FROM `Course` WHERE `FacultyID` = `facID`;
 END;//
 DELIMITER ;
 
