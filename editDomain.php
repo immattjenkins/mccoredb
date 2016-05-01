@@ -1,6 +1,6 @@
 <?php
-
 include_once('includes/coreDB.php');
+
 if(!isset($_REQUEST['id'])) {
   die("No Domain To Edit");
 }
@@ -13,8 +13,8 @@ if(isset($_REQUEST['edit_domain_submit'])) {
 $domainInfo = getDomainInfo($_REQUEST['id'], $_SESSION['userID']); 
 
 //TODO: Make sure they have permissions
-
 $pageTitle = "Editing " . $domainInfo['Title'];
 $content = "editDomain.php";
+$linkHighlights = array("home" => "", "domain" => "current", "prospectus" => "", "courses" => "", "stats" => "");
 
 include_once('pages/master.php');

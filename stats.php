@@ -5,5 +5,6 @@ include_once('includes/coreDB.php');
 
 $pageTitle = "Statistics";
 $content = "stats.php";
+$linkHighlights = array("home" => "", "domain" => "", "prospectus" => "", "courses" => "", "stats" => "current");
 
 include_once('pages/master.php');

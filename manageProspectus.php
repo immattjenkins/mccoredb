@@ -58,5 +58,6 @@ if(isset($_REQUEST['submit_prospectus'])) {
 
 $pageTitle = "Create A Prospectus";
 $content = "manageProspectus.php";
+$linkHighlights = array("home" => "", "domain" => "", "prospectus" => "current", "courses" => "", "stats" => "");
 
 include_once('pages/master.php');

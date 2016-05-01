@@ -15,5 +15,6 @@ $prospectusList = getProspectusList($_SESSION['userID']);
 
 $pageTitle = "Prospectus";
 $content = "prospectus.php";
+$linkHighlights = array("home" => "", "domain" => "", "prospectus" => "current", "courses" => "", "stats" => "");
 
 include_once('pages/master.php');

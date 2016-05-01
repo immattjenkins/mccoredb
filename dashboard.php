@@ -5,5 +5,6 @@ include_once('includes/coreDB.php');
 
 $pageTitle = "MC CoreDB Dashboard";
 $content = "dashboard.php";
+$linkHighlights = array("home" => "current", "domain" => "", "prospectus" => "", "courses" => "", "stats" => "");
 
 include_once('pages/master.php');

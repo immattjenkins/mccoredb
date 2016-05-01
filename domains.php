@@ -4,7 +4,17 @@ include_once('includes/coreDB.php');
 
 //TODO: Make sure they have permissions
 if(isset($_REQUEST['create_domain'])) {
-  $res = createDomain($_REQUEST['domain_name'], $_SESSION['dept'], $_SESSION['userID']);
+  
+  $valid = true;
+
+  if($_REQUEST['domain_name'] == "") {
+   $messages[] = array('class' => 'failure', 'text' => 'No name for prospectus given.');
+   $valid = false;
+  }
+
+  if($valid) { 
+    $res = createDomain($_REQUEST['domain_name'], $_SESSION['dept'], $_SESSION['userID']);
+  }
 }
 
 if(isset($_REQUEST['deleteID'])) {
@@ -12,7 +22,9 @@ if(isset($_REQUEST['deleteID'])) {
 }
 
 $domainList = getAllDomains($_SESSION['userID']);
+
 $pageTitle = "Domains";
 $content = "domains.php";
+$linkHighlights = array("home" => "", "domain" => "current", "prospectus" => "", "courses" => "", "stats" => "");
 
 include_once('pages/master.php');

@@ -17,13 +17,13 @@
         <div id="menu">
 	  <?php if(isset($_SESSION['userID']) && $_SESSION['userID'] > 0): ?>
           <ul class="menu-links">
-              <a href="dashboard.php"><li class="current">HOME</li></a>
+              <a href="dashboard.php"><li class="<?php echo $linkHighlights['home'] ?>">HOME</li></a>
 	      <?php if($_SESSION['canCreate'] == 1): ?> 
-	        <a href="domains.php"><li>DOMAIN</li></a>
+	        <a href="domains.php"><li class="<?php echo $linkHighlights["domain"] ?>">DOMAIN</li></a>
 	      <?php endif;?>
-	      <a href="prospectus.php"><li>PROSPECTUS</li></a>
-              <a href="courses.php"><li>COURSES</li></a>
-              <a href="stats.php"><li>STATS</li></a>
+	      <a href="prospectus.php"><li class="<?php echo $linkHighlights["prospectus"] ?>">PROSPECTUS</li></a>
+              <a href="courses.php"><li class="<?php echo $linkHighlights["courses"] ?>">COURSES</li></a>
+              <a href="stats.php"><li class="<?php echo $linkHighlights["stats"] ?>">STATS</li></a>
               <a href="index.php?logout=true"><li>LOGOUT</li></a>
           </ul>
 	  <?php endif;?>

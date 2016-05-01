@@ -258,3 +258,64 @@ function deleteProspectus($prospectusID, $userID) {
   return $res;
 }
 
+function createCourse($name, $prospectusID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CreateCourse`(?, ?, ?)");
+  $stmt->bind_param("sii", $name, $prospectusID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function deleteCourse($courseID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `DeleteCourse`(?, ?)");
+  $stmt->bind_param("ii", $courseID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function getCourseList($userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetCourseList`(?)");
+  $stmt->bind_param("i", $userID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+
+function getCourseInfo($courseID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetCourseInfo`(?, ?)");
+  $stmt->bind_param("ii", $courseID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+

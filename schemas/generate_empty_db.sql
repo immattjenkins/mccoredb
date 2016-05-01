@@ -481,6 +481,15 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- GetCourseInfo
+DROP PROCEDURE IF EXISTS `GetCourseInfo`;
+DELIMITER //
+CREATE PROCEDURE `GetCourseInfo`(`courseID` INT, `facID` INT)
+BEGIN
+	SELECT `ID`, `Name`, `ProspectusID` FROM `Course` WHERE `FacultyID` = `facID` AND `ID` = `courseID`;
+END;//
+DELIMITER ;
+
 --
 -- Section
 --
