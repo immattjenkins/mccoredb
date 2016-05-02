@@ -258,13 +258,13 @@ function deleteProspectus($prospectusID, $userID) {
   return $res;
 }
 
-function createCourse($name, $prospectusID, $userID) {
+function createCourse($name, $code, $prospectusID, $userID) {
   // Grab global var mysqli
   global $mysqli;
 
   // Set up prepared statement
-  $stmt = $mysqli->prepare("CALL `CreateCourse`(?, ?, ?)");
-  $stmt->bind_param("sii", $name, $prospectusID, $userID);
+  $stmt = $mysqli->prepare("CALL `CreateCourse`(?, ?, ?, ?)");
+  $stmt->bind_param("ssii", $name, $code, $prospectusID, $userID);
 
   // Fetch results 
   $res = singleRowStatement($stmt);
@@ -314,6 +314,88 @@ function getCourseInfo($courseID, $userID) {
 
   // Fetch results 
   $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function updateCourseInfo($name, $code, $courseID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `UpdateCourseInfo`(?, ?, ?, ?)");
+  $stmt->bind_param("ssii", $name, $code, $courseID, $userID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function addStudents($str, $userID) {
+  
+  // If not the root admin, fail.
+  if($userID != 1) { 
+   return false;
+  }
+
+  // Strip TinyMCE formatting
+  $str = strip_tags($str); 
+
+  // Create array that will contain each line
+  $csv = array();
+
+  // Explode into lines and add to array 
+  // (thanks to batigolix from stackoverflow for this idea)
+  $lines = explode("\n", $str);
+  foreach($lines as $line) {
+    $csv[] = str_getcsv($line);
+  }
+
+  // Grab global var mysqli
+  global $mysqli;  
+  foreach($csv as $person) {
+
+    // Set up prepared statement
+    $stmt = $mysqli->prepare("CALL `CreateStudent`(?, ?, ?)");
+    $stmt->bind_param("sss", $person[0], $person[1], $person[2]);
+
+    // Fetch results 
+    $res = singleRowStatement($stmt);
+    $stmt->close();
+  
+  }
+  return $res; 
+
+}
+
+function getCourseSections($courseID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ListSectionByCourse`(?)");
+  $stmt->bind_param("i", $courseID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function createSection($number, $term, $courseID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ListSectionByCourse`(?)");
+  $stmt->bind_param("i", $courseID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
   $stmt->close();
 
   return $res;

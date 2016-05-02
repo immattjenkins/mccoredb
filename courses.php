@@ -13,8 +13,12 @@ if(isset($_REQUEST['submit_create'])) {
    $valid = false;
   }
 
+  if($_REQUEST['course_code'] == "") {
+   $valid = false;
+  }
+
   if($valid) {
-    $res = createCourse($_REQUEST['course_name'], $_REQUEST['prospectus'], $_SESSION['userID']);
+    $res = createCourse($_REQUEST['course_name'], $_REQUEST['course_code'], $_REQUEST['prospectus'], $_SESSION['userID']);
   }
 }
 //TODO: Make sure they have permissions

@@ -63,6 +63,7 @@ CREATE TABLE `Student` (
 CREATE TABLE `Course` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`Name` VARCHAR(255) NOT NULL,
+	`CourseCode` VARCHAR(255) NOT NULL,
 	`ProspectusID` INT NOT NULL,
 	`FacultyID` INT NOT NULL,
 	CONSTRAINT `fkProspectusCourse` FOREIGN KEY (`ProspectusID`) REFERENCES `Prospectus`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -72,6 +73,7 @@ CREATE TABLE `Course` (
 CREATE TABLE `Section` (
 	`ID` INT AUTO_INCREMENT,
 	`AcademicYear` YEAR NOT NULL,
+        `Term` VARCHAR(255) NOT NULL,
 	`Number` INT NOT NULL,
 	`CourseID` INT NOT NULL,
 	PRIMARY KEY `pk_Section` (`ID`, `AcademicYear`),
@@ -451,9 +453,9 @@ DELIMITER ;
 -- CreateCourse
 DROP PROCEDURE IF EXISTS `CreateCourse`;
 DELIMITER //
-CREATE PROCEDURE `CreateCourse`(`name` VARCHAR(255), `prospectusID` INT, `facultyID` INT)
+CREATE PROCEDURE `CreateCourse`(`name` VARCHAR(255), `courseCode` VARCHAR(255), `prospectusID` INT, `facultyID` INT)
 BEGIN
-	INSERT IGNORE INTO `Course`(`Name`, `ProspectusID`, `FacultyID`) VALUES(`name`, `prospectusID`, `facultyID`);
+	INSERT IGNORE INTO `Course`(`Name`, `CourseCode`, `ProspectusID`, `FacultyID`) VALUES(`name`, `courseCode`, `prospectusID`, `facultyID`);
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Course created' AS `Message`;
@@ -477,7 +479,7 @@ DROP PROCEDURE IF EXISTS `GetCourseList`;
 DELIMITER //
 CREATE PROCEDURE `GetCourseList`(`facID` INT)
 BEGIN
-	SELECT `ID`, `Name`, `ProspectusID` FROM `Course` WHERE `FacultyID` = `facID`;
+	SELECT `ID`, `Name`, `CourseCode`, `ProspectusID` FROM `Course` WHERE `FacultyID` = `facID`;
 END;//
 DELIMITER ;
 
@@ -486,7 +488,17 @@ DROP PROCEDURE IF EXISTS `GetCourseInfo`;
 DELIMITER //
 CREATE PROCEDURE `GetCourseInfo`(`courseID` INT, `facID` INT)
 BEGIN
-	SELECT `ID`, `Name`, `ProspectusID` FROM `Course` WHERE `FacultyID` = `facID` AND `ID` = `courseID`;
+	SELECT `ID`, `Name`, `CourseCode`, `ProspectusID` FROM `Course` WHERE `FacultyID` = `facID` AND `ID` = `courseID`;
+END;//
+DELIMITER ;
+
+-- UpdateCourseInfo
+DROP PROCEDURE IF EXISTS `UpdateCourseInfo`;
+DELIMITER //
+CREATE PROCEDURE `UpdateCourseInfo`(`courseName` VARCHAR(255), `courseCode` VARCHAR(255), `courseID` INT, `facID` INT)
+BEGIN
+	UPDATE `Course` SET `Name` = `courseName`, `CourseCode` = `courseCode` 
+		WHERE `ID` = `courseID` AND `FacultyID` = `facID`;
 END;//
 DELIMITER ;
 
@@ -497,9 +509,9 @@ DELIMITER ;
 -- CreateSection
 DROP PROCEDURE IF EXISTS `CreateSection`;
 DELIMITER //
-CREATE PROCEDURE `CreateSection`(`academicYear` YEAR, `num` INT, `courseID` INT)
+CREATE PROCEDURE `CreateSection`(`num` INT, `courseID` INT, `term` VARCHAR(255))
 BEGIN
-	INSERT IGNORE INTO `Section`(`AcademicYear`, `Number`, `CourseID`) VALUES(`academicYear`, `num`, `couresID`);
+	INSERT IGNORE INTO `Section`(`AcademicYear`, `Number`, `CourseID`, `Term`) VALUES(YEAR(NOW()), `num`, `courseID`, `term`);
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Section created' AS `Message`;
@@ -530,6 +542,15 @@ BEGIN
 	ELSE
 		SELECT -1 AS `ID`, 'Section number update failed.' AS `Message`;
 		END IF;
+END;//
+DELIMITER ;
+
+-- ListSectionByCourse
+DROP PROCEDURE IF EXISTS `ListSectionByCourse`;
+DELIMITER //
+CREATE PROCEDURE `ListSectionByCourse`(`courseID` INT)
+BEGIN
+        SELECT `AcademicYear`, `Number`, `Term` FROM `Section` WHERE `CourseID` = `courseID`;
 END;//
 DELIMITER ;
 

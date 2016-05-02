@@ -19,10 +19,11 @@ if(isset($_REQUEST['username'])) {
   $_SESSION['username'] = "";
   $_SESSION['canCreate'] = 0;
   $_SESSION['dept'] = "";
-} else {
+}
+/*} else {
   $_SESSION['userID'] = -1;
   $_SESSION['username'] = "";
   $_SESSION['canCreate'] = 0;
   $_SESSION['dept'] = "";
   $loginFailed = false;
-}
+}*/
