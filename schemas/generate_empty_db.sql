@@ -5,6 +5,7 @@
 -- Delete tables if currently existing
 --
 
+DROP TABLE IF EXISTS `RubricItemDescription`;
 DROP TABLE IF EXISTS `RubricItemResponse`;
 DROP TABLE IF EXISTS `RubricItem`;
 DROP TABLE IF EXISTS `Rubric`;
@@ -71,19 +72,18 @@ CREATE TABLE `Course` (
 );
 
 CREATE TABLE `Section` (
-	`ID` INT AUTO_INCREMENT,
+	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`AcademicYear` YEAR NOT NULL,
         `Term` VARCHAR(255) NOT NULL,
 	`Number` INT NOT NULL,
 	`CourseID` INT NOT NULL,
-	PRIMARY KEY `pk_Section` (`ID`, `AcademicYear`),
 	CONSTRAINT `fkCourse` FOREIGN KEY (`CourseID`) REFERENCES `Course`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `Roster` (
-	`ID` INT AUTO_INCREMENT PRIMARY KEY,
 	`StudentID` VARCHAR(50) NOT NULL,
 	`SectionID` INT NOT NULL,
+        PRIMARY KEY (`StudentID`, `SectionID`),
 	INDEX `idx_RosterFK` (`StudentID`, `SectionID`),
 	CONSTRAINT `fkRosterStudentID` FOREIGN KEY (`StudentID`) REFERENCES `Student`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT `fkRosterSectionID` FOREIGN KEY (`SectionID`) REFERENCES `Section`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -91,19 +91,27 @@ CREATE TABLE `Roster` (
 
 CREATE TABLE `Rubric` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
-	`CreatedOn` DATETIME NOT NULL,
+	`CreatedOn` TIMESTAMP DEFAULT NOW(),
 	`ProspectusID` INT NOT NULL,
-	CONSTRAINT `fk_RubricProspectus` FOREIGN KEY (`ProspectusID`) REFERENCES `Prospectus`(`ID`)
+	CONSTRAINT `fk_RubricProspectus` FOREIGN KEY (`ProspectusID`) REFERENCES `Prospectus`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `RubricItem` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
+        `Title` TEXT NOT NULL,
 	`Question` TEXT NOT NULL,
 	`RubricID` INT NOT NULL,
-	`CourseID` INT NOT NULL,
-	INDEX `idx_RubricItemFK` (`RubricID`, `CourseID`),
-	CONSTRAINT `fk_RubricCourseID` FOREIGN KEY (`CourseID`) REFERENCES `Course`(`ID`),
-	CONSTRAINT `fk_RubricRubricID` FOREIGN KEY (`RubricID`) REFERENCES `Rubric`(`ID`)
+	INDEX `idx_RubricItemFK` (`RubricID`),
+	CONSTRAINT `fk_RubricRubricID` FOREIGN KEY (`RubricID`) REFERENCES `Rubric`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE `RubricItemDescription` (
+	`ID` INT AUTO_INCREMENT PRIMARY KEY,
+	`ScoreLevel` INT NOT NULL,
+	`Explanation` TEXT NOT NULL,
+	`RubricItemID` INT NOT NULL,
+	INDEX `idx_RubricItemDescFK` (`RubricItemID`),
+	CONSTRAINT `fk_RubricItemID` FOREIGN KEY (`RubricItemID`) REFERENCES `RubricItem`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE `RubricItemResponse` (
@@ -113,8 +121,8 @@ CREATE TABLE `RubricItemResponse` (
 	`StudentID` VARCHAR(50) NOT NULL,
 	`RubricItemID` INT NOT NULL,
 	INDEX `idx_RubricItemResponseFK` (`StudentID`, `RubricItemID`),
-	CONSTRAINT `fk_RIRStudentID` FOREIGN KEY (`StudentID`) REFERENCES `Student`(`ID`),
-	CONSTRAINT `fk_RIRRubricItemID` FOREIGN KEY (`RubricItemID`) REFERENCES `RubricItem`(`ID`)
+	CONSTRAINT `fk_RIRStudentID` FOREIGN KEY (`StudentID`) REFERENCES `Student`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT `fk_RIRRubricItemID` FOREIGN KEY (`RubricItemID`) REFERENCES `RubricItem`(`ID`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 --
@@ -548,9 +556,9 @@ DELIMITER ;
 -- ListSectionByCourse
 DROP PROCEDURE IF EXISTS `ListSectionByCourse`;
 DELIMITER //
-CREATE PROCEDURE `ListSectionByCourse`(`courseID` INT)
+CREATE PROCEDURE `ListSectionByCourse`(`cID` INT)
 BEGIN
-        SELECT `AcademicYear`, `Number`, `Term` FROM `Section` WHERE `CourseID` = `courseID`;
+        SELECT `ID`, `AcademicYear`, `Number`, `Term` FROM `Section` WHERE `CourseID` = `cID`;
 END;//
 DELIMITER ;
 
@@ -561,9 +569,9 @@ DELIMITER ;
 -- AddStudentToRoster
 DROP PROCEDURE IF EXISTS `AddStudentToRoster`;
 DELIMITER //
-CREATE PROCEDURE `AddStudentToRoster`(`studentID` VARCHAR(50), `secID` INT, `secYear` YEAR)
+CREATE PROCEDURE `AddStudentToRoster`(`studentID` VARCHAR(50), `secID` INT)
 BEGIN
-	INSERT INTO `Roster`(`StudentID`, `SectionID`, `SectionAcademicYear`) VALUES(`studentID`, `sectionID`, `sectionAcademicYear`);
+	INSERT INTO `Roster`(`StudentID`, `SectionID`) VALUES(`studentID`, `secID`);
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Student added successfully' AS `Message`;
@@ -576,9 +584,21 @@ DELIMITER ;
 -- RemoveStudentFromRoster
 DROP PROCEDURE IF EXISTS `RemoveStudentFromRoster`;
 DELIMITER //
-CREATE PROCEDURE `RemoveStudentFromRoster`(`rosterID` INT)
+CREATE PROCEDURE `RemoveStudentFromRoster`(`secID` INT, `sID` INT)
 BEGIN
-	DELETE FROM `Roster` WHERE `ID` = `rosterID`;
+	DELETE FROM `Roster` WHERE `SectionID` = `secID` AND `StudentID` = `sID`;
+END;//
+DELIMITER ;
+
+-- ListStudentsInRoster
+DROP PROCEDURE IF EXISTS `ListStudentsInRoster`;
+DELIMITER //
+CREATE PROCEDURE `ListStudentsInRoster`(`sID` INT, `userID` INT) 
+BEGIN
+      SELECT `FirstName`, `LastName`, `Student`.`ID`
+	FROM `Roster`
+	INNER JOIN `Student` ON `Student`.`ID` = `Roster`.`StudentID`
+        WHERE `SectionID` = `sID`;
 END;//
 DELIMITER ;
 
@@ -617,9 +637,9 @@ DELIMITER ;
 -- CreateRubricItem
 DROP PROCEDURE IF EXISTS `CreateRubricItem`;
 DELIMITER //
-CREATE PROCEDURE `CreateRubricItem`(`question` TEXT, `rubricID` INT, `courseID` INT)
+CREATE PROCEDURE `CreateRubricItem`(`title` TEXT, `question` TEXT, `rubricID` INT, `courseID` INT)
 BEGIN
-	INSERT INTO `RubricItem`(`Question`, `RubricID`, `CourseID`) VALUES(`question`, `rubricID`, `courseID`);
+	INSERT INTO `RubricItem`(`Title`, `Question`, `RubricID`, `CourseID`) VALUES(`title`, `question`, `rubricID`, `courseID`);
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Rubric item created successfully' AS `Message`;
@@ -695,6 +715,18 @@ BEGIN
 END;//
 DELIMITER ;
 
+--
+-- Triggers
+--
+
+DROP TRIGGER IF EXISTS `CreateRubricAfterProspectus`;
+DELIMITER //
+CREATE TRIGGER `CreateRubricAfterProspectus` AFTER INSERT ON `Prospectus`
+FOR EACH ROW
+BEGIN
+  INSERT INTO `Rubric`(`ProspectusID`) VALUES(NEW.ID);
+END;//
+DELIMITER ;
 
 -- Create a test user
 CALL `CreateFaculty`("admin", "changeme", "m@mj.me", 1, "Matt", "Jenkins", "CSC");

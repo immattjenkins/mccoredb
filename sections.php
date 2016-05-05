@@ -4,7 +4,20 @@ include_once('includes/coreDB.php');
 //TODO: Make sure they have permissions
 
 if(isset($_REQUEST['add_section_submit'])) {
-  createSection($_REQUEST['section_number'], $_REQUEST['courseID']); 
+  $valid = true;
+
+  if($_REQUEST['section_number'] == "" || !is_numeric($_REQUEST['section_number'])) {
+    $valid = false;
+    $messages[] = array('class' => 'failure', 'text' => 'No section number specified'); 
+  }
+
+  if($_REQUEST['section_term'] == "") {
+    $valid = false;
+    $messages[] = array('class' => 'failure', 'text' => 'No term selected.'); 
+  }
+  if($valid) {
+    $res = createSection($_REQUEST['section_number'], $_REQUEST['courseID'], $_REQUEST['section_term']); 
+  }
 }
 
 $sections = getCourseSections($_REQUEST['courseID']);

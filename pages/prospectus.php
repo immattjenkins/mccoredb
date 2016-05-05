@@ -15,7 +15,9 @@
 
 <ul>   
   <?php foreach($prospectusList as $prospectus): ?>
-    <li><a href="manageProspectus.php?id=<?php echo $prospectus['ID'] ?>&mode=update"><?php echo $prospectus['Name'] ?></a> 
+    <li>
+        <a href="manageProspectus.php?id=<?php echo $prospectus['ID'] ?>&mode=update"><?php echo $prospectus['Name'] ?></a> 
+	<a href="rubric.php?prospectusID=<?php echo $prospectus['ID']; ?>">(rubric)</a>
         <a href="prospectus.php?id=<?php echo $prospectus['ID'] ?>&mode=delete">(delete)</a>
     </li>
   <?php endforeach; ?>

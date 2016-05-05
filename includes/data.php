@@ -386,13 +386,28 @@ function getCourseSections($courseID) {
   return $res;
 }
 
-function createSection($number, $term, $courseID) {
+function createSection($number, $courseID, $term) {
   // Grab global var mysqli
   global $mysqli;
 
   // Set up prepared statement
-  $stmt = $mysqli->prepare("CALL `ListSectionByCourse`(?)");
-  $stmt->bind_param("i", $courseID);
+  $stmt = $mysqli->prepare("CALL `CreateSection`(?, ?, ?)");
+  $stmt->bind_param("iis", $number, $courseID, $term);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function getStudentsInRoster($sectionID, $userID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ListStudentsInRoster`(?, ?)");
+  $stmt->bind_param("ii", $sectionID, $userID);
 
   // Fetch results 
   $res = multipleRowStatement($stmt);
@@ -401,3 +416,32 @@ function createSection($number, $term, $courseID) {
   return $res;
 }
 
+function addStudentToRoster($studentID, $sectionID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `AddStudentToRoster`(?, ?)");
+  $stmt->bind_param("ii", $studentID, $sectionID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function removeStudentFromRoster($studentID, $sectionID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `RemoveStudentFromRoster`(?, ?)");
+  $stmt->bind_param("ii", $studentID, $sectionID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
