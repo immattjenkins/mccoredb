@@ -107,7 +107,7 @@ CREATE TABLE `RubricItem` (
 
 CREATE TABLE `RubricItemDescription` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
-	`ScoreLevel` INT NOT NULL,
+	`ScoreLevel` VARCHAR(255) NOT NULL,
 	`Explanation` TEXT NOT NULL,
 	`RubricItemID` INT NOT NULL,
 	INDEX `idx_RubricItemDescFK` (`RubricItemID`),
@@ -667,6 +667,15 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- UpdateRubricItem
+DROP PROCEDURE IF EXISTS `UpdateRubricItem`;
+DELIMITER //
+CREATE PROCEDURE `UpdateRubricItem`(`title` TEXT, `question` TEXT, `upID` INT)
+BEGIN
+	UPDATE `RubricItem` SET `Title` = `title`, `Question` = `question` WHERE `ID` = `upID`;
+END;//
+DELIMITER ;
+
 -- GetRubricItemList
 DROP PROCEDURE IF EXISTS `GetRubricItemList`;
 DELIMITER //
@@ -733,6 +742,29 @@ BEGIN
 	ELSE
 		SELECT -1 AS `ID`, 'Score update failed' AS `Message`;
 	END IF;
+END;//
+DELIMITER ;
+
+-- GetRubricItemInfo
+DROP PROCEDURE IF EXISTS `GetRubricItemInfo`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricItemInfo`(`rID` INT)
+BEGIN
+	SELECT `RubricItem`.`Title`, `RubricItem`.`Question`, `RubricItemDescription`.`ID` AS `RID`, `ScoreLevel`, `Explanation`
+		FROM `RubricItem`
+		INNER JOIN `RubricItemDescription` ON `RubricItemDescription`.`RubricItemID` = `RubricItem`.`ID`
+		WHERE `RubricItem`.`ID` = `rID`;
+END;//
+DELIMITER ;
+
+-- GetRubricItemInfoByID
+DROP PROCEDURE IF EXISTS `GetRubricItemInfoByID`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricItemInfoByID`(`rID` INT)
+BEGIN
+	SELECT `ID`, `Title`, `Question` 
+                FROM `RubricItem`
+                WHERE `RubricItem`.`ID` = `rID`;
 END;//
 DELIMITER ;
 

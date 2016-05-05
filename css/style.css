@@ -161,6 +161,11 @@ a.button, a.secondary_button {
   padding: 5px 0px;
 }
 
+#content td {
+  border: 1px solid #fff;
+  padding: 0;
+  margin: 0;
+}
 /* END Content */
 
 /* BEGIN Menu Links */
