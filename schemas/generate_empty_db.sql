@@ -630,6 +630,15 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- GetRubricInfo
+DROP PROCEDURE IF EXISTS `GetRubricInfo`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricInfo`(`prosID` INT)
+BEGIN
+	SELECT `ID` FROM `Rubric` WHERE `ProspectusID` = `prosID`;
+END;//
+DELIMITER ;
+
 --
 -- RubricItem
 --
@@ -637,9 +646,9 @@ DELIMITER ;
 -- CreateRubricItem
 DROP PROCEDURE IF EXISTS `CreateRubricItem`;
 DELIMITER //
-CREATE PROCEDURE `CreateRubricItem`(`title` TEXT, `question` TEXT, `rubricID` INT, `courseID` INT)
+CREATE PROCEDURE `CreateRubricItem`(`title` TEXT, `question` TEXT, `rubricID` INT)
 BEGIN
-	INSERT INTO `RubricItem`(`Title`, `Question`, `RubricID`, `CourseID`) VALUES(`title`, `question`, `rubricID`, `courseID`);
+	INSERT INTO `RubricItem`(`Title`, `Question`, `RubricID`) VALUES(`title`, `question`, `rubricID`);
 
 	IF ROW_COUNT() > 0 THEN
 		SELECT LAST_INSERT_ID() AS `ID`, 'Rubric item created successfully' AS `Message`;
@@ -658,6 +667,18 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- GetRubricItemList
+DROP PROCEDURE IF EXISTS `GetRubricItemList`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricItemList`(`prosID` INT)
+BEGIN
+	SELECT `RubricItem`.`ID`, `RubricItem`.`Title`
+		FROM `RubricItem`
+		INNER JOIN `Rubric` ON `Rubric`.`ID` = `RubricItem`.`RubricID`
+		INNER JOIN `Prospectus` ON `Prospectus`.`ID` = `Rubric`.`ProspectusID`
+		WHERE `Rubric`.`ProspectusID` = `prosID`;
+END;//
+DELIMITER ;
 --
 -- RubricItemResponse
 --

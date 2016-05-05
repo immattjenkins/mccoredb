@@ -445,3 +445,34 @@ function removeStudentFromRoster($studentID, $sectionID) {
 
   return $res;
 }
+
+function getRubricItemList($prospectusID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRubricItemList`(?)");
+  $stmt->bind_param("i", $prospectusID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function getRubricInfo($prospectusID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRubricInfo`(?)");
+  $stmt->bind_param("i", $prospectusID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
