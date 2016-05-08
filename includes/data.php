@@ -551,3 +551,167 @@ function deleteRubricItem($id) {
   return $res; 
 }
 
+function createItemRubricDescription($num, $level, $exp, $rID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CreateRubricItemDescription`(?, ?, ?, ?)");
+  $stmt->bind_param("issi", $num, $level, $exp, $rID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function getRubricItemDescriptionInfo($id) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRubricItemDescriptionInfo`(?)");
+  $stmt->bind_param("i", $id);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function deleteRubricItemDescription($id) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `DeleteRubricItemDescription`(?)");
+  $stmt->bind_param("i", $id);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function getStudentInfo($studID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetStudentInfo`(?)");
+  $stmt->bind_param("i", $studID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function getRubricBySection($secID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRubricBySection`(?)");
+  $stmt->bind_param("i", $secID);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function getRubricItemsByID($rubID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRubricItemsByID`(?)");
+  $stmt->bind_param("i", $rubID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function getRubricItemDesc($itemID) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRubricItemDesc`(?)");
+  $stmt->bind_param("i", $itemID);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+
+  return $res; 
+}
+
+function gradeStudent($score, $explanation, $student, $item) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CreateRubricItemResponse`(?, ?, ?, ?)");
+  $stmt->bind_param("issi", $score, $explanation, $student, $item);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function checkGrades($student, $item) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CheckIfStudentHasGrades`(?, ?)");
+  $stmt->bind_param("si", $student, $item);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function updateGrade($id, $comment, $score) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `UpdateRIR`(?, ?, ?)");
+  $stmt->bind_param("isi", $id, $comment, $score);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function getStudentGrade($student, $item) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetStudentGrade`(?, ?)");
+  $stmt->bind_param("si", $student, $item);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}

@@ -116,6 +116,7 @@ CREATE TABLE `RubricItemDescription` (
 
 CREATE TABLE `RubricItemResponse` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
+	`ScoreNum` INT NOT NULL,
 	`Score` VARCHAR(3) NOT NULL,
 	`Comment` TEXT NULL,
 	`StudentID` VARCHAR(50) NOT NULL,
@@ -718,11 +719,11 @@ END;//
 DELIMITER ;
 
 -- UpdateRIRComment
-DROP PROCEDURE IF EXISTS `UpdateRIRComment`;
+DROP PROCEDURE IF EXISTS `UpdateRIR`;
 DELIMITER //
-CREATE PROCEDURE `UpdateRIRComment`(`rirID` INT, `comment` TEXT)
+CREATE PROCEDURE `UpdateRIR`(`rirID` INT, `comment` TEXT, `num` INT)
 BEGIN
-	UPDATE IGNORE `RubricItemResponse` SET `Comment` = `comment` WHERE `ID` = `rirID`;
+	UPDATE IGNORE `RubricItemResponse` SET `Comment` = `comment`, `Score` = `num` WHERE `ID` = `rirID`;
 	IF ROW_COUNT() > 0 THEN
 		SELECT `rirID` AS `ID`, 'Comment updated successfully' AS `Message`;
 	ELSE
@@ -765,6 +766,110 @@ BEGIN
 	SELECT `ID`, `Title`, `Question` 
                 FROM `RubricItem`
                 WHERE `RubricItem`.`ID` = `rID`;
+END;//
+DELIMITER ;
+
+-- CreateRubricItemDescription
+DROP PROCEDURE IF EXISTS `CreateRubricItemDescription`;
+DELIMITER //
+CREATE PROCEDURE `CreateRubricItemDescription`(`num` INT, `score` VARCHAR(255), `explanation` TEXT, `rIID` INT)
+BEGIN
+	INSERT INTO `RubricItemDescription`(`ScoreNum`, `ScoreLevel`, `Explanation`, `RubricItemID`) VALUES(`num`, `score`, `explanation`, `rIID`);
+
+        IF ROW_COUNT() > 0 THEN
+                SELECT LAST_INSERT_ID() AS `ID`, 'Score updated successfully' AS `Message`;
+        ELSE
+                SELECT -1 AS `ID`, 'Score update failed' AS `Message`;
+        END IF; 
+END;//
+DELIMITER ;
+
+-- GetRubricItemDescriptionInfo
+DROP PROCEDURE IF EXISTS `GetRubricItemDescriptionInfo`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricItemDescriptionInfo`(`descID` INT)
+BEGIN
+	SELECT `ID`, `ScoreNum`, `ScoreLevel`, `Explanation`
+		FROM `RubricItemDescription`
+		WHERE `ID` = `descID`;
+END;//
+DELIMITER ;
+
+-- DeleteRubricItemDescription
+DROP PROCEDURE IF EXISTS `DeleteRubricItemDescription`;
+DELIMITER //
+CREATE PROCEDURE `DeleteRubricItemDescription`(`descID` INT)
+BEGIN
+	DELETE FROM `RubricItemDescription` WHERE `ID` = `descID`;
+END;//
+DELIMITER ;
+
+-- GetRubricBySection
+DROP PROCEDURE IF EXISTS `GetRubricBySection`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricBySection`(`secID` INT) 
+BEGIN
+	SELECT `Rubric`.`ID` AS `RubricID`
+		FROM `Section`
+		INNER JOIN `Course` ON `Course`.`ID` = `Section`.`CourseID`
+		INNER JOIN `Prospectus` ON `Prospectus`.`ID` = `Course`.`ProspectusID`
+		INNER JOIN `Rubric` ON `Rubric`.`ProspectusID` = `Prospectus`.`ID`
+		WHERE `Section`.`ID` = `secID`;
+	
+END;//
+DELIMITER ;
+
+-- GetRubricItemsByID
+DROP PROCEDURE IF EXISTS `GetRubricItemsByID`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricItemsByID`(`rubID` INT)
+BEGIN
+	SELECT `ID`, `Title`, `Question`
+		FROM `RubricItem`
+		WHERE `RubricItem`.`RubricID` = `rubID`
+		ORDER BY `ID` ASC;
+END;//
+DELIMITER ;
+
+-- GetRubricItemDesc
+DROP PROCEDURE IF EXISTS `GetRubricItemDesc`;
+DELIMITER //
+CREATE PROCEDURE `GetRubricItemDesc`(`itemID` INT)
+BEGIN
+	SELECT *
+		FROM `RubricItemDescription`
+		WHERE `RubricItemID` = `itemID`
+		ORDER BY `ScoreNum` DESC;
+END;//
+DELIMITER ;
+
+-- CheckIfStudentHasGrades
+DROP PROCEDURE IF EXISTS `CheckIfStudentHasGrades`;
+DELIMITER //
+CREATE PROCEDURE `CheckIfStudentHasGrades`(`studID` INT, `itemID` INT)
+BEGIN
+	DECLARE gradeExists INT DEFAULT -1; 
+	SELECT `ID`
+		FROM `RubricItemResponse`
+		WHERE `StudentID` = `studID` AND `RubricItemID` = `itemID`
+		INTO gradeExists;
+	IF gradeExists > 0 THEN
+		SELECT 'update' AS `Type`;
+	ELSE
+		SELECT 'create' AS `Type`;
+	END IF;	
+	
+END;//
+DELIMITER ;
+
+-- GetStudentGrade
+DROP PROCEDURE IF EXISTS `GetStudentGrade`;
+DELIMITER //
+CREATE PROCEDURE `GetStudentGrade`(`studID` INT, `itemID` INT)
+BEGIN
+        SELECT `ID`, `Score`, `Comment`
+                FROM `RubricItemResponse`
+                WHERE `StudentID` = `studID` AND `RubricItemID` = `itemID`;
 END;//
 DELIMITER ;
 
