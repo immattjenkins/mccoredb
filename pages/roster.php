@@ -5,7 +5,7 @@
 <?php foreach($roster as $student): ?>
   <li>
       <a href="grade.php?sectionID=<?php echo $_REQUEST['sectionID']; ?>&studentID=<?php echo $student['ID']; ?>"><?php echo $student['FirstName'] . ' ' . $student['LastName']?></a> 
-      <a href="roster.php?sectionID=<?php echo $_REQUEST['sectionID'] ?>&deleteID=<?php echo $student['ID']; ?>">(delete)</a>
+      <a href="roster.php?sectionID=<?php echo $_REQUEST['sectionID'] ?>&deleteID=<?php echo $student['ID']; ?>" title="Delete"><img src="img/delete.png" alt="(Delete)" /></a>
   </li>
 <?php endforeach; ?>
 </ul>

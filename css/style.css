@@ -41,6 +41,9 @@ label {
   font-weight: bold;
   font-size: 12pt;
 }
+.hidden_item {
+  display: none;
+}
 
 .orange_button {
   background: #E66C1E;
@@ -164,8 +167,13 @@ a.button, a.secondary_button {
 
 #content li {
   list-style-type: none;
-  padding: 10px 0px;
+  padding: 10px 0;
   border-bottom: 1px solid #E66C1E;
+}
+
+#content li img {
+  position: relative;
+  top: 3px;
 }
 
 #content td {
