@@ -873,6 +873,88 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- ReportByStudentID
+DROP PROCEDURE IF EXISTS `ReportByStudentID`;
+DELIMITER //
+CREATE PROCEDURE `ReportByStudentID`(`student` VARCHAR(255))
+BEGIN
+	SELECT `RubricItem`.`Title`, `Score`, `Prospectus`.`Name`
+		FROM `RubricItemResponse` 
+		INNER JOIN `RubricItem` ON `RubricItemResponse`.`RubricItemID` = `RubricItem`.`ID`
+		INNER JOIN `Rubric` ON `Rubric`.`ID` = `RubricItem`.`RubricID`
+		INNER JOIN `Prospectus` ON `Prospectus`.`ID` = `Rubric`.`ProspectusID`
+		WHERE `StudentID` = `student`
+		GROUP BY `RubricItemID`;
+END;//
+DELIMITER ;
+
+-- ReportByCourseCode
+DROP PROCEDURE IF EXISTS `ReportByCourseCode`;
+DELIMITER //
+CREATE PROCEDURE `ReportByCourseCode`(`cCode` VARCHAR(255))
+BEGIN
+	SELECT `RubricItem`.`Title`, SUM(`Score`)/COUNT(`Score`) AS `Score`
+		FROM `RubricItemResponse` 
+		INNER JOIN `RubricItem` ON `RubricItem`.`ID` = `RubricItemResponse`.`RubricItemID`
+		INNER JOIN `Rubric` ON `Rubric`.`ID` = `RubricItem`.`RubricID`
+		INNER JOIN `Course` ON `Course`.`ProspectusID` = `Rubric`.`ProspectusID`
+		WHERE `CourseCode` = `cCode`
+		GROUP BY `RubricItemID`;
+END;//
+DELIMITER ;
+
+-- GetPrivFaculty
+DROP PROCEDURE IF EXISTS `GetPrivFaculty`;
+DELIMITER //
+CREATE PROCEDURE `GetPrivFaculty`()
+BEGIN
+	SELECT `ID`, `FirstName`, `LastName`
+		FROM `Faculty`
+		WHERE `CanCreateDomain` = 1;
+END;//
+DELIMITER ;
+
+-- GetRegularFaculty
+DROP PROCEDURE IF EXISTS `GetRegularFaculty`;
+DELIMITER //
+CREATE PROCEDURE `GetRegularFaculty`()
+BEGIN
+        SELECT `ID`, `FirstName`, `LastName`
+                FROM `Faculty`
+                WHERE `CanCreateDomain` = 0;
+END;//
+DELIMITER ;
+
+--    CheckUsername
+DROP PROCEDURE IF EXISTS `CheckUsername`;
+DELIMITER //
+CREATE PROCEDURE `CheckUsername`(`un` VARCHAR(255))
+BEGIN
+  DECLARE userId INT DEFAULT -1; 
+  SELECT `ID` FROM `Faculty` WHERE `Username` = un INTO userId;
+  IF userId = -1 THEN
+     SELECT 1 AS `Available`;
+  ELSE
+     SELECT 0 AS `Available`;
+  END IF; 
+END;//
+DELIMITER ;
+
+--    CheckEmail
+DROP PROCEDURE IF EXISTS `CheckEmail`;
+DELIMITER //
+CREATE PROCEDURE `CheckEmail`(`un` VARCHAR(255))
+BEGIN
+  DECLARE userId INT DEFAULT -1; 
+  SELECT `ID` FROM `Faculty` WHERE `Email` = un INTO userId;
+  IF userId = -1 THEN
+     SELECT 1 AS `Available`;
+  ELSE
+     SELECT 0 AS `Available`;
+  END IF; 
+END;//
+DELIMITER ;
+
 --
 -- Triggers
 --
@@ -887,5 +969,5 @@ END;//
 DELIMITER ;
 
 -- Create a test user
-CALL `CreateFaculty`("admin", "changeme", "m@mj.me", 1, "Matt", "Jenkins", "CSC");
-CALL `CreateFaculty`("admin2", "changeme", "m@mj.me", 0, "Matt", "Jenkins", "MTH");
+CALL `CreateFaculty`("admin", "changeme", "INFOTECH", 1, "MaryvilleCollege", "IT", "IT");
+CALL `CreateFaculty`("testUser", "changeme", "test@email.com", 0, "Test", "User", "Education");

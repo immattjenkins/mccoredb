@@ -715,3 +715,139 @@ function getStudentGrade($student, $item) {
   
   return $res;
 }
+
+function reportByStudentID($student) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ReportByStudentID`(?)");
+  $stmt->bind_param("s", $student);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function reportByCourseCode($code) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ReportByCourseCode`(?)");
+  $stmt->bind_param("s", $code);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function changePassword($id, $pass) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `ChangeFacultyPassword`(?, ?)");
+  $stmt->bind_param("is", $id, $pass);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function getPrivFaculty() {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetPrivFaculty`()");
+  //$stmt->bind_param("s", $code);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function getRegularFaculty() {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `GetRegularFaculty`()");
+  //$stmt->bind_param("s", $code);
+
+  // Fetch results 
+  $res = multipleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function promoteFaculty($id) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `PromoteFaculty`(?)");
+  $stmt->bind_param("i", $id);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+  
+  return $res;
+}
+
+function demoteFaculty($id) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `DemoteFaculty`(?)");
+  $stmt->bind_param("i", $id);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function checkUsername($user) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CheckUsername`(?)");
+  $stmt->bind_param("s", $user);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+
+function checkEmail($email) {
+  // Grab global var mysqli
+  global $mysqli;
+
+  // Set up prepared statement
+  $stmt = $mysqli->prepare("CALL `CheckEmail`(?)");
+  $stmt->bind_param("s", $email);
+
+  // Fetch results 
+  $res = singleRowStatement($stmt);
+  $stmt->close();
+
+  return $res;
+}
+

@@ -1,7 +1,20 @@
 <?php
 
 include_once('includes/coreDB.php');
-//TODO: Make sure they have permissions
+include_once('includes/protect.php');
+
+$prospectusList = getProspectusList($_SESSION['userID']);
+
+if(isset($_REQUEST['submit_sBSID'])) {
+  $res = reportByStudentID($_REQUEST['selectByStudentID']);
+  $student = getStudentInfo($_REQUEST['selectByStudentID']);
+  $who = $student['First Name'] . ' ' . $student['Last Name'];
+}
+
+if(isset($_REQUEST['submit_sBCC'])) {
+  $res = reportByCourseCode($_REQUEST['selectByCourseCode']);
+  $who = $_REQUEST['selectByCourseCode'];
+}
 
 $pageTitle = "Statistics";
 $content = "stats.php";

@@ -26,9 +26,10 @@
   <input hidden name="studentID" value="<?php echo $_REQUEST['studentID']; ?>" />
   <input hidden name="sectionID" value="<?php echo $_REQUEST['sectionID']; ?>" />
   <?php foreach($rubricItems as $item): ?>
-    <label for="score-<?php echo $item['ID']; ?>"><?php echo $item['Title'] ?></label>
+    <label for="score-<?php echo $item['ID']; ?>"><?php echo $item['Title'] ?> Score</label>
     <input id="score-<?php echo $item['ID']; ?>" name="score-<?php echo $item['ID']; ?>" value="<?php if(isset($item['Grade']['Score'])) echo $item['Grade']['Score']; ?>" placeholder="Enter number value" />
+    <label for="score-<?php echo $item['ID']; ?>"><?php echo $item['Title'] ?> Comment</label> 
     <textarea name="explanation-<?php echo $item['ID']; ?>"><?php if(isset($item['Grade']['Comment'])) echo $item['Grade']['Comment']; ?></textarea>
   <?php endforeach; ?>
-  <button name="grade_student_submit" class="orange_button button block" value="grade">Submit</button>
+  <button name="grade_student_submit" class="orange_button button block tinyButtonFix" value="grade">Submit</button>
 </form>

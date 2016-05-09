@@ -1,6 +1,7 @@
 <?php
 
 include_once('includes/coreDB.php');
+include_once('includes/protect.php');
 
 if(isset($_REQUEST['deleteID'])) {
   deleteCourse($_REQUEST['deleteID'], $_SESSION['userID']);

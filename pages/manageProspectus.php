@@ -32,6 +32,6 @@
    <?php if(isset($prospectus)) echo $prospectus['Required Content']; ?>
   </textarea>
 
-  <button id="submit_prospectus" name="submit_prospectus" class="orange_button button" value="submit">Submit</button>
+  <button id="submit_prospectus" name="submit_prospectus" class="orange_button button tinyButtonFix" value="submit">Submit</button>
 
 </form>

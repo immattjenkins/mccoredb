@@ -1,7 +1,11 @@
 <?php
 include_once('includes/coreDB.php');
-//TODO: Make sure they have permissions
-//TODO: Only allow user 1 to do this (will be admin)
+include_once('includes/protect.php');
+
+// Only user 1 can access this
+if($_SESSION['userID'] != 1) {
+  include_once('index.php'); die();
+}
 
 if(isset($_REQUEST['submit_students'])) {
   addStudents($_REQUEST['add_students'], $_SESSION['userID']);

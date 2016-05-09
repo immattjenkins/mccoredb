@@ -1,8 +1,7 @@
 <?php
 
 include_once('includes/coreDB.php');
-
-//TODO: Make sure they have permissions
+include_once('includes/protect.php');
 
 //Get student info
 $student = getStudentInfo($_REQUEST['studentID']);
@@ -35,7 +34,7 @@ if(isset($_REQUEST['grade_student_submit'])) {
   foreach($_REQUEST as $item) {
     if($item == "") {
       $valid = false;
-      // add msg
+      $messages[] = array('class' => 'failure', 'text' => 'Field left blank.');
     }
   }
 

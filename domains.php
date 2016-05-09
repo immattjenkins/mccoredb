@@ -1,8 +1,8 @@
 <?php
 
 include_once('includes/coreDB.php');
+include_once('includes/protect.php');
 
-//TODO: Make sure they have permissions
 if(isset($_REQUEST['create_domain'])) {
   
   $valid = true;

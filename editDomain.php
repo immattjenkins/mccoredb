@@ -1,5 +1,6 @@
 <?php
 include_once('includes/coreDB.php');
+include_once('includes/protect.php');
 
 if(!isset($_REQUEST['id'])) {
   die("No Domain To Edit");

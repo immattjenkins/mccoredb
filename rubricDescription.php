@@ -1,7 +1,7 @@
 <?php
 
 include_once('includes/coreDB.php');
-//TODO: Make sure they have permissions
+include_once('includes/protect.php');
 
 if(isset($_REQUEST['deleteDesc'])) {
   deleteRubricItemDescription($_REQUEST['deleteDesc']);

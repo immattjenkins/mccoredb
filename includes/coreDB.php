@@ -9,7 +9,7 @@ session_start();
 
 if(!isset($_SESSION["userID"])) {
   $_SESSION["userID"] = -1;
-} else if($_SESSION['userID'] == -1) {
+} else if($_SESSION['userID'] != -2 || $_SESSION['userID'] > 0) {
 }
 
 //include_once('login.php');

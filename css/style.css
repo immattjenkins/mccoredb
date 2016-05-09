@@ -55,6 +55,10 @@ label {
   color: #fff;
 }
 
+.tinyButtonFix {
+  margin-top: 15px;
+}
+
 a.button, a.secondary_button {
   text-decoration: none;
 }
@@ -222,8 +226,6 @@ a.button, a.secondary_button {
 /* MESSAGES */
 
 #messages {
-  background: #DDD;
-  border: 5px solid #E66C1E;
   padding: 15px;
 }
 
@@ -233,6 +235,10 @@ a.button, a.secondary_button {
 
 .failure { 
   color: red;
+  border: 0 !important; 
+  /* Really hate to have to use this here, 
+     would rather do this part correctly; however,
+     project deadline is approaching. */
 }
 
 .success {

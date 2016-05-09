@@ -1,8 +1,7 @@
 <?php
 
 include_once('includes/coreDB.php');
-
-//TODO: Make sure they have permissions
+include_once('includes/protect.php');
 
 $pageTitle = "Create A Prospectus";
 $content = "createProspectus.php";

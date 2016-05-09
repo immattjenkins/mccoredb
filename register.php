@@ -18,10 +18,18 @@ if(isset($_REQUEST['createaccount'])) {
 
   $valid = true;
   
-  // TODO:
-  // Check username availability
-  // Check that emails are not in use yet / availability
-
+  $userCheck = checkUsername($username); 
+  if($userCheck['Available'] == 0 || $username == "") {
+    $messages[] = array('class' => 'failure', 'text' => "Username {$username} is not available.");
+    $valid = false;
+  }  
+ 
+  $emailCheck = checkEmail($email);
+  if($emailCheck['Available'] == 0|| $email == "") {
+    $messages[] = array('class' => 'failure', 'text' => "Email {$email} is not available.");
+    $valid = false;
+  }    
+  
   if($password == "" || $password != $confirmPassword) {
     $valid = false;
     $messages[] = array('class' => 'failure', 'text' => 'Passwords do not match');
@@ -60,5 +68,6 @@ if(isset($_REQUEST['createaccount'])) {
 
 $pageTitle = "Register";
 $content = "register.php";
+$linkHighlights = array("home" => "current", "domain" => "", "prospectus" => "", "courses" => "", "stats" => "");
 
 include_once('pages/master.php');

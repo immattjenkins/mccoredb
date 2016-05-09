@@ -1,7 +1,7 @@
 <?php
 
 include_once('includes/coreDB.php');
-//TODO: Make sure they have permissions
+include_once('includes/protect.php');
 //TODO: Messages
 
 if(isset($_REQUEST['submit_score'])) {
@@ -23,8 +23,12 @@ if(isset($_REQUEST['submit_score'])) {
   }
    
   if($valid) { 
-    createItemRubricDescription($_REQUEST['score_num'], $_REQUEST['score_level'], $_REQUEST['explanation'], $_REQUEST['rubricItemID']);
-    include_once('prospectus.php'); die();
+    $res = createItemRubricDescription($_REQUEST['score_num'], $_REQUEST['score_level'], $_REQUEST['explanation'], $_REQUEST['rubricItemID']);
+    //include_once('prospectus.php'); die();
+    echo $_REQUEST['score_num'] . ' ' . $_REQUEST['score_level'] . ' ' . $_REQUEST['explanation'] . ' ' . $_REQUEST['rubricItemID'];
+    var_dump($res);
+    $res = createItemRubricDescription(5, "Test", "This is a test", 1);
+    var_dump($res);
   }
 }
 
