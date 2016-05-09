@@ -107,6 +107,7 @@ CREATE TABLE `RubricItem` (
 
 CREATE TABLE `RubricItemDescription` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
+	`ScoreNum` INT NOT NULL,
 	`ScoreLevel` VARCHAR(255) NOT NULL,
 	`Explanation` TEXT NOT NULL,
 	`RubricItemID` INT NOT NULL,
@@ -116,8 +117,7 @@ CREATE TABLE `RubricItemDescription` (
 
 CREATE TABLE `RubricItemResponse` (
 	`ID` INT AUTO_INCREMENT PRIMARY KEY,
-	`ScoreNum` INT NOT NULL,
-	`Score` VARCHAR(3) NOT NULL,
+	`Score` INT NOT NULL,
 	`Comment` TEXT NULL,
 	`StudentID` VARCHAR(50) NOT NULL,
 	`RubricItemID` INT NOT NULL,

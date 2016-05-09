@@ -24,11 +24,7 @@ if(isset($_REQUEST['submit_score'])) {
    
   if($valid) { 
     $res = createItemRubricDescription($_REQUEST['score_num'], $_REQUEST['score_level'], $_REQUEST['explanation'], $_REQUEST['rubricItemID']);
-    //include_once('prospectus.php'); die();
-    echo $_REQUEST['score_num'] . ' ' . $_REQUEST['score_level'] . ' ' . $_REQUEST['explanation'] . ' ' . $_REQUEST['rubricItemID'];
-    var_dump($res);
-    $res = createItemRubricDescription(5, "Test", "This is a test", 1);
-    var_dump($res);
+    include_once('prospectus.php'); die();
   }
 }
 
