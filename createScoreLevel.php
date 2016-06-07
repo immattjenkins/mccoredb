@@ -2,7 +2,6 @@
 
 include_once('includes/coreDB.php');
 include_once('includes/protect.php');
-//TODO: Messages
 
 if(isset($_REQUEST['submit_score'])) {
   $valid = true;
